@@ -136,7 +136,7 @@ class ProductItemCard extends StatelessWidget {
                           ),
                         );
                       }else{
-                        await Provider.of<CartProvider>(context, listen: false).addHomeProductsToCart(product);
+                        await Provider.of<CartProvider>(context, listen: false).addHomeProductsToCart(context, product);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             padding: EdgeInsets.all(0),

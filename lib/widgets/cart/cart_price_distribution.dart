@@ -12,7 +12,8 @@ class CartPriceDistribution extends StatelessWidget {
     return FutureBuilder(
       future: Provider.of<CartProvider>(context).calculateCartPrice(),
       builder: (BuildContext _, snapshote) {
-        List<Map<String, dynamic>> charges = Provider.of<CartProvider>(context).chargesList;
+        List<Map<String, dynamic>> charges =
+            Provider.of<CartProvider>(context).chargesList;
         return Container(
           child: Column(
             children: [
@@ -22,10 +23,46 @@ class CartPriceDistribution extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      'You Earn',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'Arial, Regular',
+                        color: AppColors.secondaryColor,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.circle,
+                          color: AppColors.primaryColor,
+                          size: 10,
+                        ),
+                        SizedBox(width: 5,),
+                        Text(
+                          '64 VIP Points',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontFamily: 'Arial, Regular',
+                            color: SplashScreenPageColors.backgroundColor,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30, top: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
                       'SUBTOTAL',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'Arial, Regular',
                         color: AppColors.secondaryColor,
                       ),
@@ -34,7 +71,7 @@ class CartPriceDistribution extends StatelessWidget {
                       '${(charges[0]['amount'] as num).toDouble().toProperCurrencyString()}',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'Arial, Regular',
                         color: SplashScreenPageColors.backgroundColor,
                       ),
@@ -51,7 +88,7 @@ class CartPriceDistribution extends StatelessWidget {
                       'DELIVERY',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'Arial, Regular',
                         color: AppColors.secondaryColor,
                       ),
@@ -60,7 +97,7 @@ class CartPriceDistribution extends StatelessWidget {
                       '${(charges[1]['amount'] as num).toDouble().toProperCurrencyString()}',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'Arial, Regular',
                         color: SplashScreenPageColors.backgroundColor,
                       ),
@@ -86,7 +123,7 @@ class CartPriceDistribution extends StatelessWidget {
                       'TOTAL',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'Arial, Bold',
                         fontWeight: FontWeight.bold,
                         color: SplashScreenPageColors.backgroundColor,
@@ -97,7 +134,7 @@ class CartPriceDistribution extends StatelessWidget {
                       '${(charges[3]['amount'] as num).toDouble().toProperCurrencyString()}',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'Arial, Bold',
                         fontWeight: FontWeight.bold,
                         color: SplashScreenPageColors.backgroundColor,

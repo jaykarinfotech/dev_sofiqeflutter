@@ -8,8 +8,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
   final bool isTerm;
+  final bool isReturnPolicy;
 
-  const PrivacyPolicyScreen({Key? key, required this.isTerm}) : super(key: key);
+  const PrivacyPolicyScreen({Key? key, required this.isTerm, required this.isReturnPolicy}) : super(key: key);
 
   @override
   createState() => _PrivacyPolicyScreenState();
@@ -30,7 +31,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         ),
         backgroundColor: Colors.white,
         title: Text(
-          widget.isTerm ? 'Terms and Conditions' : 'Privacy Policy',
+          widget.isReturnPolicy ? 'Return Policy' : widget.isTerm ? 'Terms and Conditions' : 'Privacy Policy',
           style: Theme.of(context).textTheme.headline1!.copyWith(
                 fontSize: 15,
                 color: Colors.black,
@@ -47,7 +48,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               backgroundColor: Colors.white,
               key: _key,
               javascriptMode: JavascriptMode.unrestricted,
-              initialUrl: widget.isTerm
+              initialUrl: widget.isReturnPolicy ? 'https://dev.sofiqe.com/sReturnsPolicy.htm' : widget.isTerm
                   ? 'http://dev.sofiqe.com/sTermsNConditions.htm'
                   : 'http://dev.sofiqe.com/sPrivacyPolicy.htm')),
 

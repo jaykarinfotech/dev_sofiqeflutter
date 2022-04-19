@@ -93,6 +93,43 @@ NaturalMeModelNew naturalMeModelFromJson(String str) => NaturalMeModelNew.fromJs
 String naturalMeModelToJson(NaturalMeModelNew data) => json.encode(data.toJson());
 
 class NaturalMeModelNew {
+
+  String getUserImagePath() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'sk_profile_pic');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+  String getSkin() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'customer_skincolour');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+  String getSkinUndertone() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'customer_skinundertone');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+  String getEyeColor() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'customer_eyecolour');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+  String getHairColor() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'customer_haircolour');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+  String getLipColor() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'customer_lipcolour');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+  String getAllergicTo() {
+    int trendIndex = customAttributes!.indexWhere((f) => f.attributeCode == 'allergic_to');
+    return customAttributes![trendIndex].value.toString();
+  }
+
+
   NaturalMeModelNew({
     this.id,
     this.groupId,

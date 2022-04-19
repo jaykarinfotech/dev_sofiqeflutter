@@ -18,11 +18,15 @@ class AccountProvider extends ChangeNotifier {
   late User? user;
 
   AccountProvider() {
+    _initData();
+  }
+
+  _initData() async {
     // userToken = '';
     customerId = -1;
     isLoggedIn = false;
     goldPremium = false;
-    checkSavedAccount();
+    await checkSavedAccount();
   }
 
   Future<void> checkSavedAccount() async {

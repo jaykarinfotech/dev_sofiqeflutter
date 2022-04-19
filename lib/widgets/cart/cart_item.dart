@@ -214,7 +214,7 @@ class _CartItemState extends State<CartItem> {
     try {
 
       await cartProvider.removeFromCart('${item['item_id']}', refresh: false);
-      await cartProvider.addToCart(
+      await cartProvider.addToCart(c,
           item['sku'] != null ? item['sku'].toString().contains("-") ? item['sku'].toString().split("-").first : item['sku'] : "",
           item['product_option'] == null ? [] :
           item['product_option']['extension_attributes'] == null ? [] :

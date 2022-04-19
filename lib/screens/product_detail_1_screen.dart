@@ -528,7 +528,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
 
                               await Provider.of<CartProvider>(context,
                                   listen: false)
-                                  .addToCart(responseBody['sku'], selectedOptions, 1);
+                                  .addToCart(context, responseBody['sku'], selectedOptions, 1);
                               qty--;
                               setState(() {});
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -547,7 +547,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                             }else{
                               await Provider.of<CartProvider>(context,
                                   listen: false)
-                                  .addToCart(responseBody['sku'], [], 1);
+                                  .addToCart(context, responseBody['sku'], [], 1);
                               qty--;
                               setState(() {});
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(

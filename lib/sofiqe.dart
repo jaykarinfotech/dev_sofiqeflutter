@@ -6,16 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:sofiqe/provider/account_provider.dart';
-import 'package:sofiqe/provider/catalog_provider.dart';
-import 'package:sofiqe/provider/home_provider.dart';
-import 'package:sofiqe/provider/page_provider.dart';
-import 'package:sofiqe/provider/phone_verification_controller.dart';
-import 'package:sofiqe/provider/try_it_on_provider.dart';
 import 'package:sofiqe/screens/premium_subscription_screen.dart';
 import 'package:sofiqe/screens/shopping_bag_screen.dart';
 import 'package:sofiqe/utils/constants/route_names.dart';
 import 'package:sofiqe/provider/cart_provider.dart';
-import 'package:sofiqe/provider/wishlist_provider.dart';
 import 'package:sofiqe/screens/splash_screen.dart';
 import 'package:sofiqe/screens/wizard_screen.dart';
 import 'package:sofiqe/screens/home_screen.dart';
@@ -24,18 +18,14 @@ import 'package:sofiqe/screens/catalog_screen.dart';
 import 'package:sofiqe/widgets/scaffold/scaffold_template.dart';
 import 'package:get/get.dart';
 
+
 GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 //Root class
 class Sofiqe extends StatelessWidget {
   Sofiqe({Key? key}) : super(key: key);
-  final WishListProvider wp = Get.put(WishListProvider());
-  final c = Get.put(PhoneVerificationController());
-  final HomeProvider hp = Get.put(HomeProvider());
-  final TryItOnProvider tiop = Get.put(TryItOnProvider());
-  final PageProvider pp = Get.put(PageProvider());
-  final CatalogProvider cp = Get.put(CatalogProvider());
+
 
   @override
   Widget build(BuildContext context) {

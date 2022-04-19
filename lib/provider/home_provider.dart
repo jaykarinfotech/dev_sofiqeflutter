@@ -29,13 +29,22 @@ class HomeProvider extends GetxController {
   Rx<DataReadyStatus> dealOfTheDayStatus = DataReadyStatus.INACTIVE.obs;
 
   HomeProvider() {
-    this.fetchBestSellersList();
-    this.fetchDealOfTheDayList();
+    // this.fetchBestSellersList();
+    // this.fetchDealOfTheDayList();
+    callAPis();
   }
 
-  callAPis(){
-    fetchBestSellersList();
-    fetchDealOfTheDayList();
+  callAPis() async{
+    Location location = new Location();
+    PermissionStatus _permissionGranted;
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted == PermissionStatus.granted) {
+        await fetchDealOfTheDayList();
+      }
+    }
+    await fetchBestSellersList();
   }
 
   Future<bool> fetchBestSellersList() async {
@@ -102,12 +111,16 @@ class HomeProvider extends GetxController {
     } catch (e) {
       bestSellerListStatus.value = DataReadyStatus.ERROR;
       print('Error getting best selling products: $e');
-      Get.showSnackbar(
-        GetBar(
-          message: 'Best selling products could not be fetched',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetBar(
+            message: 'Best selling products could not be fetched',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }catch(ee){
+
+      }
     }
     return false;
   }
@@ -242,12 +255,16 @@ class HomeProvider extends GetxController {
     } catch (e) {
       dealOfTheDayStatus.value = DataReadyStatus.ERROR;
       print('Error fetchDealOfTheDayList: $e');
-      Get.showSnackbar(
-        GetBar(
-          message: 'Deal of the day could not be fetched',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetBar(
+            message: 'Deal of the day could not be fetched',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }catch(ee){
+
+      }
     }
     return false;
   }

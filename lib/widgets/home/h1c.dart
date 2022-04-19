@@ -249,7 +249,7 @@ class BestSellerItem extends StatelessWidget {
                       );
                     }else {
                       CartProvider cartP = Provider.of<CartProvider>(context, listen: false);
-                      await cartP.addHomeProductsToCartt(product);
+                      await cartP.addHomeProductsToCartt(context, product);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           padding: EdgeInsets.all(0),

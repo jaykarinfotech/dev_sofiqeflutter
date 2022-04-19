@@ -40,52 +40,75 @@ class CatalogProvider extends GetxController {
   var selectedStar = 10.obs;
   var starValueChanges = false.obs;
 
-  var availableStar = [ "4+ Star", "3+ Star","2+ Star"];
-
+  var availableStar = ["4+ Star", "3+ Star", "2+ Star"];
 
   Map<FaceArea, int> faceAreaToIdMapping = {
-    FaceArea.EYES:  279,
+    FaceArea.EYES: 279,
     FaceArea.LIPS: 280,
     FaceArea.CHEEKS: 278,
     FaceArea.ALL: -1,
   };
 
-
   // Constructor
   CatalogProvider() {
-    this.defaults();
-    this.fetchBrandNames(faceAreaToStringMapping[FaceArea.LIPS] as String);
-    this.fetchBrandNames(faceAreaToStringMapping[FaceArea.CHEEKS] as String);
-    this.fetchBrandNames(faceAreaToStringMapping[FaceArea.EYES] as String);
-    this.fetchCategory();
-    this.fetchUnfilteredItems(false);
+    _initializedData();
   }
 
+  _initializedData() async {
+    this.defaults();
+    await this
+        .fetchBrandNames(faceAreaToStringMapping[FaceArea.LIPS] as String);
+    await this
+        .fetchBrandNames(faceAreaToStringMapping[FaceArea.CHEEKS] as String);
+    await this
+        .fetchBrandNames(faceAreaToStringMapping[FaceArea.EYES] as String);
+    await this.fetchUnfilteredItems(false);
+    await this.fetchCategory();
+  }
 
-   fetchCategory() async {
+  Future<void> fetchCategory() async {
     try {
       CategoryResponse responseList = await sfAPIFetchFaceCategory();
-      if (responseList.childrenData != null && responseList.childrenData!.isNotEmpty && responseList.childrenData!.firstWhere((element) => element.name != null && element.name!.toLowerCase() == "shop",orElse: ()  {
-       return  ChildrenData();
-      }).name == null ) {
+      if (responseList.childrenData != null &&
+          responseList.childrenData!.isNotEmpty &&
+          responseList.childrenData!.firstWhere(
+                  (element) =>
+                      element.name != null &&
+                      element.name!.toLowerCase() == "shop", orElse: () {
+                return ChildrenData();
+              }).name ==
+              null) {
         throw 'Proper key not found in response';
       }
-
-      List<ChildrenData> faceSubAreaAndParameter = responseList.childrenData!.firstWhere((element) => element.name != null && element.name!.toLowerCase() == "shop" && element.childrenData != null,orElse: () => ChildrenData()).childrenData!;
-      categoryFilter.value =   responseList.childrenData!.firstWhere((element) => element.name != null && element.name!.toLowerCase() == "shop" && element.childrenData != null,orElse: () => ChildrenData());
+      List<ChildrenData> faceSubAreaAndParameter = responseList.childrenData!
+          .firstWhere(
+              (element) =>
+                  element.name != null &&
+                  element.name!.toLowerCase() == "shop" &&
+                  element.childrenData != null,
+              orElse: () => ChildrenData())
+          .childrenData!;
+      categoryFilter.value = responseList.childrenData!.firstWhere(
+          (element) =>
+              element.name != null &&
+              element.name!.toLowerCase() == "shop" &&
+              element.childrenData != null,
+          orElse: () => ChildrenData());
       faceSubAreaAndParameter.forEach((element) {
-        if(element.name != null && element.name!.toLowerCase() == "complexion"){
+        if (element.name != null &&
+            element.name!.toLowerCase() == "complexion") {
           allProductFilter.value.subAreas.addAll(element.childrenData!);
           cheeksProductFilter.value.subAreas.addAll(element.childrenData!);
-        }else if(element.name != null && element.name!.toLowerCase() == "eyes"){
+        } else if (element.name != null &&
+            element.name!.toLowerCase() == "eyes") {
           allProductFilter.value.subAreas.addAll(element.childrenData!);
           eyesProductFilter.value.subAreas.addAll(element.childrenData!);
-        }else if(element.name != null && element.name!.toLowerCase() == "lips"){
+        } else if (element.name != null &&
+            element.name!.toLowerCase() == "lips") {
           allProductFilter.value.subAreas.addAll(element.childrenData!);
           lipsProductFilter.value.subAreas.addAll(element.childrenData!);
         }
       });
-
     } catch (err) {
       print('Could not get face areas and parameters: $err');
     }
@@ -139,7 +162,7 @@ class CatalogProvider extends GetxController {
           catalogItemsCurrentPage.value = 0;
           stf.readFilter();
           catalogItemsStatus.value = DataReadyStatus.FETCHING;
-          fetchCentralColorProducts(stf);
+          await fetchCentralColorProducts(stf);
         }
         break;
       case FilterType.PRODUCT:
@@ -158,7 +181,7 @@ class CatalogProvider extends GetxController {
           catalogItemsCurrentPage.value = 0;
           pf.readFilter();
           catalogItemsStatus.value = DataReadyStatus.FETCHING;
-          fetchProductItems(pf);
+          await fetchProductItems(pf);
         }
         break;
       case FilterType.PRICE:
@@ -167,7 +190,7 @@ class CatalogProvider extends GetxController {
           catalogItemsCurrentPage.value = 0;
           this.priceFilter.value.readFilter();
           catalogItemsStatus.value = DataReadyStatus.FETCHING;
-          fetchBetweenPriceItems();
+          await fetchBetweenPriceItems();
         }
         break;
       case FilterType.BRAND:
@@ -186,33 +209,36 @@ class CatalogProvider extends GetxController {
           catalogItemsCurrentPage.value = 0;
           pf.readFilter();
           catalogItemsStatus.value = DataReadyStatus.FETCHING;
-          fetchBrandItems(pf);
+          await fetchBrandItems(pf);
         }
         break;
       case FilterType.REVIEW:
-        if(starValueChanges.value){
-        catalogItemsList.removeWhere((element) => true);
-        catalogItemsCurrentPage.value = 0;
-        catalogItemsStatus.value = DataReadyStatus.FETCHING;
-        if (faceArea.value == FaceArea.ALL) {
-          fetchUnfilteredItems(true);
-        } else {
-          fetchUnfilteredFaceArea(faceAreaToIdMapping[faceArea.value] as int,true);
-        }}
+        if (starValueChanges.value) {
+          catalogItemsList.removeWhere((element) => true);
+          catalogItemsCurrentPage.value = 0;
+          catalogItemsStatus.value = DataReadyStatus.FETCHING;
+          if (faceArea.value == FaceArea.ALL) {
+            await fetchUnfilteredItems(true);
+          } else {
+            await fetchUnfilteredFaceArea(
+                faceAreaToIdMapping[faceArea.value] as int, true);
+          }
+        }
         break;
       case FilterType.POPULAR:
         catalogItemsList.removeWhere((element) => true);
         catalogItemsCurrentPage.value = 0;
         catalogItemsStatus.value = DataReadyStatus.FETCHING;
-        fetchPopularItems();
+        await fetchPopularItems();
         break;
       case FilterType.NONE:
         catalogItemsList.removeWhere((element) => true);
         catalogItemsStatus.value = DataReadyStatus.FETCHING;
         if (faceArea.value == FaceArea.ALL) {
-          fetchUnfilteredItems(false);
+          await fetchUnfilteredItems(false);
         } else {
-          fetchUnfilteredFaceArea(faceAreaToIdMapping[faceArea.value] as int,false);
+          await fetchUnfilteredFaceArea(
+              faceAreaToIdMapping[faceArea.value] as int, false);
         }
         break;
     }
@@ -276,7 +302,8 @@ class CatalogProvider extends GetxController {
           case FaceArea.EYES:
           case FaceArea.LIPS:
           case FaceArea.CHEEKS:
-            success = await fetchUnfilteredFaceArea(faceAreaToIdMapping[faceArea.value] as int,true);
+            success = await fetchUnfilteredFaceArea(
+                faceAreaToIdMapping[faceArea.value] as int, true);
             break;
         }
         break;
@@ -291,7 +318,8 @@ class CatalogProvider extends GetxController {
           case FaceArea.EYES:
           case FaceArea.LIPS:
           case FaceArea.CHEEKS:
-            success = await fetchUnfilteredFaceArea(faceAreaToIdMapping[faceArea.value] as int,false);
+            success = await fetchUnfilteredFaceArea(
+                faceAreaToIdMapping[faceArea.value] as int, false);
             break;
         }
         break;
@@ -314,11 +342,12 @@ class CatalogProvider extends GetxController {
   }
 
   // API calls
-  Future<bool> fetchUnfilteredFaceArea(int faceArea,bool isForReview) async {
+  Future<bool> fetchUnfilteredFaceArea(int faceArea, bool isForReview) async {
     try {
       catalogItemsCurrentPage.value++;
 
-      Map result = await sfAPIGetUnfilteredFaceAreaItems(catalogItemsCurrentPage.value, faceArea);
+      Map result = await sfAPIGetUnfilteredFaceAreaItems(
+          catalogItemsCurrentPage.value, faceArea);
       if (!result.containsKey('items')) {
         throw 'Key not found: items';
       }
@@ -332,10 +361,11 @@ class CatalogProvider extends GetxController {
       );
 
       catalogItemsList.addAll(tempProductList);
-      if(isForReview){
-        if(selectedStar.value == 10){
-          catalogItemsList.sort((a, b) => double.parse(a.avgRating).compareTo(double.parse(b.avgRating)));
-        }else if(selectedStar.value == 0){
+      if (isForReview) {
+        if (selectedStar.value == 10) {
+          catalogItemsList.sort((a, b) =>
+              double.parse(a.avgRating).compareTo(double.parse(b.avgRating)));
+        } else if (selectedStar.value == 0) {
           var temp = catalogItemsList;
           temp.removeWhere((element) => element.avgRating.startsWith("3"));
           temp.removeWhere((element) => element.avgRating.startsWith("2"));
@@ -343,14 +373,14 @@ class CatalogProvider extends GetxController {
           temp.removeWhere((element) => element.avgRating.startsWith("0"));
           catalogItemsList.removeWhere((element) => true);
           catalogItemsList.addAll(temp);
-        }else if(selectedStar.value == 1){
+        } else if (selectedStar.value == 1) {
           var temp = catalogItemsList;
           temp.removeWhere((element) => element.avgRating.startsWith("2"));
           temp.removeWhere((element) => element.avgRating.startsWith("1"));
           temp.removeWhere((element) => element.avgRating.startsWith("0"));
           catalogItemsList.removeWhere((element) => true);
           catalogItemsList.addAll(temp);
-        }else{
+        } else {
           var temp = catalogItemsList;
           temp.removeWhere((element) => element.avgRating.startsWith("1"));
           temp.removeWhere((element) => element.avgRating.startsWith("0"));
@@ -365,12 +395,14 @@ class CatalogProvider extends GetxController {
       catalogItemsCurrentPage.value--;
       catalogItemsStatus.value = DataReadyStatus.ERROR;
       print(err);
-      Get.showSnackbar(
-        GetBar(
-          message: 'Could not load more products',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Could not load more products',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (ee) {}
       return false;
     }
   }
@@ -409,7 +441,8 @@ class CatalogProvider extends GetxController {
       String faceSubArea = stf.selectedFaceSubArea;
 
       /// Extract the options
-      List<SkinToneFilterParameters> stfp = stf.options[faceSubArea] as List<SkinToneFilterParameters>;
+      List<SkinToneFilterParameters> stfp =
+          stf.options[faceSubArea] as List<SkinToneFilterParameters>;
 
       /// Extract all recommended colors
       List colors = [];
@@ -457,12 +490,14 @@ class CatalogProvider extends GetxController {
       this.catalogItemsStatus.value = DataReadyStatus.ERROR;
       this.catalogItemsCurrentPage.value--;
       print('Error fetching parameterizedFaceSubAreaProducts: $err');
-      Get.showSnackbar(
-        GetBar(
-          message: 'Could not load more products',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Could not load more products',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (ee) {}
       return false;
     }
   }
@@ -472,7 +507,8 @@ class CatalogProvider extends GetxController {
     try {
       List result = await sfAPIGetBrandNames(faceArea);
       Map resultMap = result[0];
-      if (!resultMap.containsKey('brand') || !resultMap.containsKey('face_sub_area')) {
+      if (!resultMap.containsKey('brand') ||
+          !resultMap.containsKey('face_sub_area')) {
         throw 'Key not found: brand OR face_sub_area';
       }
       List resultFaceSubArea = resultMap['face_sub_area'];
@@ -505,7 +541,8 @@ class CatalogProvider extends GetxController {
       return true;
     } catch (err) {
       print('Error fetching brand names: $err');
-      fetchBrandNames(faceArea);
+      // This method called again and again...changed on 13-04-2022 by Ashwani
+      //fetchBrandNames(faceArea);
       return false;
     }
   }
@@ -514,7 +551,8 @@ class CatalogProvider extends GetxController {
     try {
       this.catalogItemsCurrentPage.value++;
 
-      List result = await sfAPIFetchBrandFilteredItems(this.catalogItemsCurrentPage.value, bf.brand, bf.subArea);
+      List result = await sfAPIFetchBrandFilteredItems(
+          this.catalogItemsCurrentPage.value, bf.brand, bf.subArea);
       dynamic resultMap = result[0];
       if (!resultMap.containsKey('products')) {
         throw 'Key not found: products';
@@ -549,7 +587,7 @@ class CatalogProvider extends GetxController {
       this.catalogItemsStatus.value = DataReadyStatus.ERROR;
       print('Error fetching brand filtered items: $err');
       Get.showSnackbar(
-        GetBar(
+        GetSnackBar(
           message: 'Could not fetch products',
           duration: Duration(seconds: 2),
         ),
@@ -583,7 +621,7 @@ class CatalogProvider extends GetxController {
       this.catalogItemsStatus.value = DataReadyStatus.ERROR;
       print('Error fetching product filtered items: $err');
       Get.showSnackbar(
-        GetBar(
+        GetSnackBar(
           message: 'Could not fetch products for this filter',
           duration: Duration(seconds: 2),
         ),
@@ -595,31 +633,34 @@ class CatalogProvider extends GetxController {
   Future<bool> fetchUnfilteredItems(bool sortReviewBased) async {
     try {
       catalogItemsCurrentPage.value++;
-      Map catalogUnfilteredItemsMap = await sfAPIGetCatalogUnfilteredItems(catalogItemsCurrentPage.value);
+      Map catalogUnfilteredItemsMap =
+          await sfAPIGetCatalogUnfilteredItems(catalogItemsCurrentPage.value);
       if (!catalogUnfilteredItemsMap.containsKey('items')) {
         throw 'Server failed to send catalog list';
       }
       List catalogUnfilteredItemsTempList = catalogUnfilteredItemsMap['items'];
-      List<Product> catalogUnfilteredItemsTempListOfProducts = catalogUnfilteredItemsTempList.map<Product>(
+      List<Product> catalogUnfilteredItemsTempListOfProducts =
+          catalogUnfilteredItemsTempList.map<Product>(
         (m) {
           return Product.fromDefaultMap(m);
         },
       ).toList();
       catalogItemsList.addAll(catalogUnfilteredItemsTempListOfProducts);
-      if(sortReviewBased){
-        if(selectedStar.value == 10){
-          catalogItemsList.sort((a, b) => double.parse(a.avgRating).compareTo(double.parse(b.avgRating)));
-        }else if(selectedStar.value == 0){
+      if (sortReviewBased) {
+        if (selectedStar.value == 10) {
+          catalogItemsList.sort((a, b) =>
+              double.parse(a.avgRating).compareTo(double.parse(b.avgRating)));
+        } else if (selectedStar.value == 0) {
           var temp = catalogItemsList;
           temp.removeWhere((element) => !element.avgRating.startsWith("5"));
           catalogItemsList.removeWhere((element) => true);
           catalogItemsList.addAll(temp);
-        }else if(selectedStar.value == 1){
+        } else if (selectedStar.value == 1) {
           var temp = catalogItemsList;
           temp.removeWhere((element) => !element.avgRating.startsWith("4"));
           catalogItemsList.removeWhere((element) => true);
           catalogItemsList.addAll(temp);
-        }else{
+        } else {
           var temp = catalogItemsList;
           temp.removeWhere((element) => !element.avgRating.startsWith("3"));
           catalogItemsList.removeWhere((element) => true);
@@ -632,12 +673,16 @@ class CatalogProvider extends GetxController {
       catalogItemsCurrentPage.value--;
       catalogItemsStatus.value = DataReadyStatus.ERROR;
       print(err);
-      Get.showSnackbar(
-        GetBar(
-          message: 'Could not load more products',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Could not load more products',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (ee) {
+        return false;
+      }
       return false;
     }
   }
@@ -660,14 +705,16 @@ class CatalogProvider extends GetxController {
               faceSubArea: -1,
               description: "",
               hasOption: true,
-              avgRating: p['extension_attributes'] != null && p['extension_attributes']['avgrating'] != null
+              avgRating: p['extension_attributes'] != null &&
+                      p['extension_attributes']['avgrating'] != null
                   ? p['extension_attributes']['avgrating']
                   : "0.0");
         });
 
         this.catalogItemsList.addAll(tempProductList);
       } else {
-        List responseList = await sfAPIGetCatalogPopularItems(catalogItemsCurrentPage.value);
+        List responseList =
+            await sfAPIGetCatalogPopularItems(catalogItemsCurrentPage.value);
         dynamic responseMap = responseList[0];
         if (!responseMap.containsKey('products')) {
           throw 'Products not found in response';
@@ -679,22 +726,28 @@ class CatalogProvider extends GetxController {
 
           tempProductsMap.forEach(
             (value) {
-              if (value['face_area'] == null || faceArea.value == FaceArea.ALL) {
+              if (value['face_area'] == null ||
+                  faceArea.value == FaceArea.ALL) {
                 tempProductList.add(
                   Product(
                       id: int.parse(value['entity_id']),
                       sku: value['sku'],
-                      image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                      description: value['short_description'] ?? value['description'],
+                      image: value['image'] ??
+                          value['small_image'] ??
+                          value['thumbnail'] ??
+                          "",
+                      description:
+                          value['short_description'] ?? value['description'],
                       faceSubArea: int.parse(value['face_sub_area']),
                       name: value['name'],
                       price: double.parse(value['price']),
                       options: [],
-                      avgRating:
-                          value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
-                              ? value['extension_attributes']['avgrating']
-                              : "0.0",
-                      hasOption: value['required_options'] == "1" ? true : false),
+                      avgRating: value['extension_attributes'] != null &&
+                              value['extension_attributes']['avgrating'] != null
+                          ? value['extension_attributes']['avgrating']
+                          : "0.0",
+                      hasOption:
+                          value['required_options'] == "1" ? true : false),
                 );
               } else {
                 var id = faceAreaToIdMapping[faceArea.value] as int;
@@ -703,17 +756,23 @@ class CatalogProvider extends GetxController {
                     Product(
                         id: int.parse(value['entity_id']),
                         sku: value['sku'],
-                        avgRating:
-                            value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
-                                ? value['extension_attributes']['avgrating']
-                                : "0.0",
-                        image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                        description: value['short_description'] ?? value['description'],
+                        avgRating: value['extension_attributes'] != null &&
+                                value['extension_attributes']['avgrating'] !=
+                                    null
+                            ? value['extension_attributes']['avgrating']
+                            : "0.0",
+                        image: value['image'] ??
+                            value['small_image'] ??
+                            value['thumbnail'] ??
+                            "",
+                        description:
+                            value['short_description'] ?? value['description'],
                         faceSubArea: int.parse(value['face_sub_area']),
                         name: value['name'],
                         price: double.parse(value['price']),
                         options: [],
-                        hasOption: value['required_options'] == "1" ? true : false),
+                        hasOption:
+                            value['required_options'] == "1" ? true : false),
                   );
                 }
               }
@@ -726,22 +785,28 @@ class CatalogProvider extends GetxController {
 
           tempProductsMap.forEach(
             (key, value) {
-              if (value['face_area'] == null || faceArea.value == FaceArea.ALL) {
+              if (value['face_area'] == null ||
+                  faceArea.value == FaceArea.ALL) {
                 tempProductList.add(
                   Product(
                       id: int.parse(value['entity_id']),
                       sku: value['sku'],
-                      image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                      description: value['short_description'] ?? value['description'],
+                      image: value['image'] ??
+                          value['small_image'] ??
+                          value['thumbnail'] ??
+                          "",
+                      description:
+                          value['short_description'] ?? value['description'],
                       faceSubArea: int.parse(value['face_sub_area']),
                       name: value['name'],
                       price: double.parse(value['price']),
                       options: [],
-                      avgRating:
-                          value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
-                              ? value['extension_attributes']['avgrating']
-                              : "0.0",
-                      hasOption: value['required_options'] == "1" ? true : false),
+                      avgRating: value['extension_attributes'] != null &&
+                              value['extension_attributes']['avgrating'] != null
+                          ? value['extension_attributes']['avgrating']
+                          : "0.0",
+                      hasOption:
+                          value['required_options'] == "1" ? true : false),
                 );
               } else {
                 var id = faceAreaToIdMapping[faceArea.value] as int;
@@ -750,17 +815,23 @@ class CatalogProvider extends GetxController {
                     Product(
                         id: int.parse(value['entity_id']),
                         sku: value['sku'],
-                        image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                        description: value['short_description'] ?? value['description'],
+                        image: value['image'] ??
+                            value['small_image'] ??
+                            value['thumbnail'] ??
+                            "",
+                        description:
+                            value['short_description'] ?? value['description'],
                         faceSubArea: int.parse(value['face_sub_area']),
                         name: value['name'],
-                        avgRating:
-                            value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
-                                ? value['extension_attributes']['avgrating']
-                                : "0.0",
+                        avgRating: value['extension_attributes'] != null &&
+                                value['extension_attributes']['avgrating'] !=
+                                    null
+                            ? value['extension_attributes']['avgrating']
+                            : "0.0",
                         price: double.parse(value['price']),
                         options: [],
-                        hasOption: value['required_options'] == "1" ? true : false),
+                        hasOption:
+                            value['required_options'] == "1" ? true : false),
                   );
                 }
               }
@@ -777,12 +848,16 @@ class CatalogProvider extends GetxController {
       catalogItemsCurrentPage.value--;
       catalogItemsStatus.value = DataReadyStatus.ERROR;
       print(err);
-      Get.showSnackbar(
-        GetBar(
-          message: 'Could not load more products',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Could not load more products',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (ee) {
+        return false;
+      }
       return false;
     }
   }
@@ -790,8 +865,10 @@ class CatalogProvider extends GetxController {
   Future<bool> fetchBetweenPriceItems() async {
     try {
       catalogItemsCurrentPage.value++;
-      List response = await sfAPIGetCatalogBetweenPriceItems(catalogItemsCurrentPage.value,
-          this.priceFilter.value.currentMinPrice, this.priceFilter.value.currentMaxPrice);
+      List response = await sfAPIGetCatalogBetweenPriceItems(
+          catalogItemsCurrentPage.value,
+          this.priceFilter.value.currentMinPrice,
+          this.priceFilter.value.currentMaxPrice);
       Map responseMap = response[0];
       if (!responseMap.containsKey('products')) {
         throw 'Products not found in response';
@@ -811,7 +888,8 @@ class CatalogProvider extends GetxController {
                   description: value['description'] ?? '',
                   faceSubArea: int.parse(value['face_sub_area']),
                   name: value['name'],
-                  avgRating: value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
+                  avgRating: value['extension_attributes'] != null &&
+                          value['extension_attributes']['avgrating'] != null
                       ? value['extension_attributes']['avgrating']
                       : "0.0",
                   price: double.parse(value['price']),
@@ -826,10 +904,10 @@ class CatalogProvider extends GetxController {
                     id: int.parse(value['entity_id']),
                     sku: value['sku'],
                     image: value['image'],
-                    avgRating:
-                        value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
-                            ? value['extension_attributes']['avgrating']
-                            : "0.0",
+                    avgRating: value['extension_attributes'] != null &&
+                            value['extension_attributes']['avgrating'] != null
+                        ? value['extension_attributes']['avgrating']
+                        : "0.0",
                     description: value['description'] ?? '',
                     faceSubArea: int.parse(value['face_sub_area']),
                     name: value['name'],
@@ -849,12 +927,14 @@ class CatalogProvider extends GetxController {
       catalogItemsCurrentPage.value--;
       catalogItemsStatus.value = DataReadyStatus.ERROR;
       print('Could not load items between price range $err');
-      Get.showSnackbar(
-        GetBar(
-          message: 'Could not load more products',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Could not load more products',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (ee) {}
       return false;
     }
   }
@@ -885,7 +965,7 @@ class CatalogProvider extends GetxController {
       catalogItemsStatus.value = DataReadyStatus.ERROR;
       print('Could not find user searched items: $err');
       Get.showSnackbar(
-        GetBar(
+        GetSnackBar(
           message: 'No results found!',
           duration: Duration(seconds: 2),
         ),
@@ -914,10 +994,6 @@ class CatalogProvider extends GetxController {
     faceArea = FaceArea.ALL.obs;
   }
 }
-
-
-
-
 
 Map<FaceArea, String> faceAreaToStringMapping = {
   FaceArea.EYES: 'Eyes',
@@ -1036,7 +1112,6 @@ class ProductFilter {
 
   ProductFilter();
 
-
   set subArea(ChildrenData sa) {
     _subArea = sa;
     changed = true;
@@ -1053,7 +1128,8 @@ class ProductFilter {
 
 class SkinToneFilter {
   List<String> faceSubAreas = <String>[];
-  Map<String, List<SkinToneFilterParameters>> options = <String, List<SkinToneFilterParameters>>{};
+  Map<String, List<SkinToneFilterParameters>> options =
+      <String, List<SkinToneFilterParameters>>{};
 
   String _selectedFaceSubArea = '';
 

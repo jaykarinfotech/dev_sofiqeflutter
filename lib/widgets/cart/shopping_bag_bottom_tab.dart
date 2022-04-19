@@ -50,18 +50,22 @@ class ShoppingBagBottomTab extends StatelessWidget {
                         );
                       },
                       child: Text(
-                        'PROCEED',
+                        'NEXT',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontFamily: 'Arial, Regular',
-                          color: AppColors.primaryColor,
+                        style: Theme.of(context).textTheme.headline2!.copyWith(
+                          color:Color(0xFFF2CA8A),
+                          fontSize: 16,
+                          letterSpacing: 1.4,
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
+              SizedBox(
+                height: 5,
+              ),
+              Text("or €2.50/month with Splitit"),
               SizedBox(
                 height: 20,
               ),

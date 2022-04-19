@@ -2,6 +2,8 @@ class APIEndPoints {
   static String get baseUri => 'https://dev.sofiqe.com/rest/V1';
   static String get mybaseUri => 'https://dev.sofiqe.com/index.php/rest/V1';
 
+  static String get shareBaseUrl => 'https://dev.sofiqe.com/';
+
   static String nonRecommendedColourProducts(String id) {
     return '$baseUri/products?searchCriteria[filterGroups][0][filters][0][field]=entity_id&searchCriteria[filterGroups][0][filters][0][value]=$id&searchCriteria[filterGroups][0][filters][0][condition_type]=eq';
   }
@@ -162,6 +164,10 @@ class APIEndPoints {
 
   static String get removeItemToWishList {
     return '$baseUri/wishlist/remove/';
+  }
+
+  static String get shareWishList {
+    return '$baseUri/wishlist/share';
   }
 
   static String addToCartGuest({required String cartId}) {

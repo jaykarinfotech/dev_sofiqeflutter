@@ -82,83 +82,55 @@ Future<String> _sfAPICreateRemoteCart() async {
 
 //TODO Change this to a POST TOKEN
 Future<void> sfAPIAddItemToCart(String token, int qouteId, String sku,
-    List simpleProductOptions, int type,{int quantity=0}) async {
-  // if(APITokens.customerSavedToken== null){
-  //   Uri url = Uri.parse('${APIEndPoints.addToCartGuest(cartId: token)}');
-  //   http.Response response = await http.post(
-  //     url,
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json',
-  //       'Authorization': 'Bearer ${APITokens.customerSavedToken}',
-  //     },
-  //     body: json.encode(
-  //       simpleProductOptions.isEmpty
-  //           ? {
-  //         'cartItem': {
-  //           'sku': '$sku',
-  //           'qty': 1,
-  //           'quote_id': '$token',
-  //         },
-  //       }
-  //           : {
-  //         'cartItem': {
-  //           'sku': '$sku',
-  //           'qty': 1,
-  //           'quote_id': '$token',
-  //           "productOption": {
-  //             "extensionAttributes": {
-  //               "${type == 1 ? 'custom_options' : 'configurable_item_options'}":
-  //               simpleProductOptions,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     ),
-  //   );
-  //   print(response.body);
-  //   if (response.statusCode != 200) {
-  //     throw json.decode(response.body);
-  //   }
-  // }
-  // else {
-    Uri url = Uri.parse('${APIEndPoints.addToCartGuest(cartId: token)}');
+    List simpleProductOptions, int type, String userType,
+    {int quantity = 0}) async {
+  Uri url = Uri.parse('');
+  if (userType == 'Guest') {
+    url = Uri.parse('${APIEndPoints.addToCartGuest(cartId: token)}');
     print('addToCartGuest  ${url.toString()}');
-    http.Response response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${APITokens.customerSavedToken}',
-      },
-      body: json.encode(
-        simpleProductOptions.isEmpty
-            ? {
-          'cartItem': {
-            'sku': '$sku',
-            'qty': quantity == 0 ? 1 : quantity,
-            'quote_id': '$token',
-          },
-        }
-            : {
-          'cartItem': {
-            'sku': '$sku',
-            'qty': quantity == 0 ? 1 : quantity,
-            'quote_id': '$token',
-            "productOption": {
-              "extensionAttributes": {
-                "${type == 1 ? 'custom_options' : 'configurable_item_options'}":
-                simpleProductOptions,
+  } else {
+    url = Uri.parse('${APIEndPoints.addToCartCustomer(cartId: token)}');
+    print('addToCartUser  ${url.toString()}');
+  }
+  http.Response response = await http.post(
+    url,
+    headers: userType == 'Guest' ? {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${APITokens.bearerToken}',
+    } : {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
+    },
+    body: json.encode(
+      type == 0
+          ? {
+              'cartItem': {
+                'sku': '$sku',
+                'qty': quantity == 0 ? 1 : quantity,
+                'quote_id': '$token',
+              },
+            }
+          : {
+              'cartItem': {
+                'sku': '$sku',
+                'qty': quantity == 0 ? 1 : quantity,
+                'quote_id': '$token',
+                "product_option": {
+                  "extension_attributes": {
+                    "configurable_item_options}":
+                        json.encode(simpleProductOptions),
+                  },
+                },
               },
             },
-          },
-        },
-      ),
-    );
-    print(response.body);
-    if (response.statusCode != 200) {
-      throw json.decode(response.body);
-    }
+    ),
+  );
+  print(response.body);
+  if (response.statusCode != 200) {
+    throw json.decode(response.body);
+  }
   // }
 }
 

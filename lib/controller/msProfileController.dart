@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sofiqe/model/UserDetailModel.dart';
 import 'package:sofiqe/model/profile.dart';
 import 'package:sofiqe/model/recentItemModel.dart';
 import 'package:sofiqe/network_service/network_service.dart';
@@ -36,7 +37,7 @@ class MsProfileController extends GetxController {
   TextEditingController streetController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
    TextEditingController phoneNumberCodeController =
-  TextEditingController(text: "+41");
+  TextEditingController(text: "+1");
   TextEditingController cardNumberController = TextEditingController();
   TextEditingController monthCardController = TextEditingController();
   TextEditingController cvcController = TextEditingController();
@@ -296,7 +297,6 @@ class MsProfileController extends GetxController {
       update();
     }
   }
-
   @override
   void onInit() {
     super.onInit();

@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:sofiqe/model/reviewModel.dart';
+import 'package:sofiqe/model/share_wishlist_model.dart';
 import 'package:sofiqe/model/wishListModel.dart';
 import 'package:sofiqe/network_service/network_service.dart';
 import 'package:sofiqe/utils/constants/api_end_points.dart';
 import 'package:http/http.dart' as http;
 import 'package:sofiqe/utils/constants/api_tokens.dart';
 
+import '../model/ReviewProductModel.dart';
 import '../model/my_review_by_sku.dart' as mRBS;
 
 class ReviewController extends GetxController {
   ReviewModel? reviewModel;
-  ReviewModel? myReviewModel =ReviewModel();
-  mRBS.MyReviewSkuModel? myReviewBySkuModel =mRBS.MyReviewSkuModel();
+  ReviewModel? myReviewModel = ReviewModel();
+  mRBS.MyReviewSkuModel? myReviewBySkuModel = mRBS.MyReviewSkuModel();
 
   RxInt globleReviewCount = 0.obs;
   RxInt myReviewCount = 0.obs;
@@ -22,10 +24,8 @@ class ReviewController extends GetxController {
   bool isReviewBySkuLoading = false;
   bool isGlobaleReviews = false;
   String customerToken = '';
-  List<String> reviewName = [];
-  List<String> reviewImage = [];
-  List<String> reviewGlobaleName = [];
-  List<String> reviewGlobaleImage = [];
+  List<ReviewProductModel> reviewName = <ReviewProductModel>[];
+  List<ReviewProductModel> reviewGlobaleName = <ReviewProductModel>[];
 
   ///
   /// Customize the request body
@@ -51,19 +51,31 @@ class ReviewController extends GetxController {
         var result = json.decode(response.body);
         reviewModel = ReviewModel.fromJson(result);
         globleReviewCount.value = reviewModel!.items!.length;
-        for(int i =0; i <reviewModel!.items!.length; i++){
-          getMyRiviewsBySkuData(reviewModel!.items![i].sku.toString()).then((value) {
-            if(value != null){
-              reviewGlobaleName.add(value.name.toString());
-              update();
-              if(value.mediaGalleryEntries!.isNotEmpty){
-                reviewGlobaleImage.add(value.mediaGalleryEntries![0].file.toString());
-              }
-              update();
-              print('getMyRiviewsBySkuData lllllll ${value.name.toString()}');
+        for (int i = 0; i < reviewModel!.items!.length; i++) {
+          await getMyRiviewsBySkuData(reviewModel!.items![i].sku.toString())
+              .then((value) {
+            if (value != null) {
+              reviewGlobaleName.add(new ReviewProductModel(sku: reviewModel!.items![i].sku.toString(), name: value.name.toString(), imagePath: value.mediaGalleryEntries!.isNotEmpty ? value.mediaGalleryEntries![0].file.toString() : '') );
+            } else {
+              reviewGlobaleName.add(new ReviewProductModel(sku: reviewModel!.items![i].sku.toString(), name: '', imagePath: '') );
             }
           });
+          // await getMyRiviewsBySkuData(reviewModel!.items![i].sku.toString())
+          //     .then((value) {
+          //   if (value != null) {
+          //     reviewGlobaleName.add(value.name.toString());
+          //     if (value.mediaGalleryEntries!.isNotEmpty) {
+          //       reviewGlobaleImage
+          //           .add(value.mediaGalleryEntries![0].file.toString());
+          //     }
+          //     print('getMyRiviewsBySkuData lllllll ${value.name.toString()}');
+          //   } else {
+          //     reviewGlobaleName.add('');
+          //     reviewGlobaleImage.add('');
+          //   }
+          // });
         }
+        update();
         print(globleReviewCount.value);
       } else {
         result = json.decode(response.body);
@@ -115,21 +127,20 @@ class ReviewController extends GetxController {
         result = json.decode(response.body);
         myReviewModel = ReviewModel.fromJson(result);
         print('myReviewModel  ---> ${myReviewModel!.items!.length}');
+        print('sku_id  ---> ${response.body}');
         myReviewCount.value = myReviewModel!.items!.length;
-        for(int i =0; i <myReviewModel!.items!.length; i++){
-          getMyRiviewsBySkuData(myReviewModel!.items![i].sku.toString()).then((value) {
-            if(value != null){
-              reviewName.add(value.name.toString());
-              update();
-              if(value.mediaGalleryEntries!.isNotEmpty){
-                reviewImage.add(value.mediaGalleryEntries![0].file.toString());
-              }
-              update();
-              print('getMyRiviewsBySkuData lllllll ${value.name.toString()}');
+        for (int i = 0; i < myReviewModel!.items!.length; i++) {
+          // Edited on 14-04-2022 by Ashwani
+          await getMyRiviewsBySkuData(myReviewModel!.items![i].sku.toString())
+              .then((value) {
+            if (value != null) {
+              reviewName.add(new ReviewProductModel(sku: myReviewModel!.items![i].sku.toString(), name: value.name.toString(), imagePath: value.mediaGalleryEntries!.isNotEmpty ? value.mediaGalleryEntries![0].file.toString() : '') );
+            } else {
+              reviewName.add(new ReviewProductModel(sku: myReviewModel!.items![i].sku.toString(), name: '', imagePath: '') );
             }
           });
         }
-
+        update();
       } else {
         result = json.decode(response.body);
         Get.snackbar('Error', '${result["message"]}', isDismissible: true);
@@ -142,7 +153,6 @@ class ReviewController extends GetxController {
       update();
     }
   }
-
 
   WishlistModel? wishlistModel;
   bool isWishListLoading = false;
@@ -175,12 +185,11 @@ class ReviewController extends GetxController {
     }
   }
 
-
-  Future <mRBS.MyReviewSkuModel?> getMyRiviewsBySkuData(String sku) async {
+  Future<mRBS.MyReviewSkuModel?> getMyRiviewsBySkuData(String sku) async {
     var result;
     try {
       isReviewBySkuLoading = true;
-      update();
+      //update();
       http.Response? response = await NetworkHandler.getMethodCall(
           url: "https://dev.sofiqe.com/rest/V1/products/$sku",
           headers: APIEndPoints.headers(await APITokens.adminBearerId));
@@ -193,16 +202,62 @@ class ReviewController extends GetxController {
         return myReviewBySkuModel;
       } else {
         result = json.decode(response.body);
-        Get.snackbar('Error', '${result["message"]}', isDismissible: true);
+        //Get.snackbar('Error', '${result["message"]}', isDismissible: true);
         return null;
       }
       print("Responce of API is  ${response.body}");
     } catch (e) {
-      Get.snackbar('Error', '${result["message"]}', isDismissible: true);
+      //Get.snackbar('Error', '${result["message"]}', isDismissible: true);
       return null;
     } finally {
       isReviewBySkuLoading = false;
-      update();
+      //update();
     }
   }
+
+  Future<void> shareWishlist(String email, String messages) async {
+    try {
+     ShareWishListModel model = ShareWishListModel(emails: email, message: messages);
+     var resBody = {};
+     resBody["emails"] = email;
+     resBody["message"] = messages;
+
+      Uri url = Uri.parse('${APIEndPoints.shareWishList}');
+      print('share wishlist ${url.toString()}');
+      http.Response response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${APITokens.customerSavedToken}',
+        },
+       // body: shareWishListModelToJson(model),
+        body: jsonEncode(<String, String>{
+          'emails': email,
+          'message': messages
+        })//json.encode(resBody),
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Your wishlist is shared successfully',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
+      }else{
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Wishlist not shared',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error sharing wishlist: $e');
+    }
+  }
+
+
 }

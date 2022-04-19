@@ -289,7 +289,7 @@ class TotalMakeOverProvider extends GetxController {
 
 
 
-    getRecommendedColors();
+    await getRecommendedColors();
   }
 
   Future<void> getRecommendedColors() async {
@@ -299,188 +299,225 @@ class TotalMakeOverProvider extends GetxController {
 
     Map<String, dynamic> tokenMap = await sfQueryForSharedPrefData(
         fieldName: 'user-token', type: PreferencesDataType.STRING);
-    String token = tokenMap['user-token'];
+    String token = tokenMap['user-token'] == null ? '' : tokenMap['user-token'];
 
     List resultFoundation =
         await sfAPIGetRecommendedColours(uid, token, 'Foundation');
-    faceApplicationMap[FaceArea.CHEEKS][0].recommendedColors =
-        resultFoundation[0]['values']['colors'];
-    undertone = resultFoundation[0]['values']['undertone'];
-    faceApplicationMap[FaceArea.CHEEKS][0].recommendedColors.forEach(
-      (c) async {
-        List resultFoundationProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Foundation', 5);
-        faceApplicationMap[FaceArea.CHEEKS][0]
-            .addProducts(resultFoundationProduct, c['ColourAltHEX']);
-      },
-    );
-    centralColorMap[faceApplicationMap[FaceArea.CHEEKS][0].code] =
-        faceApplicationMap[FaceArea.CHEEKS][0].recommendedColors[0];
+    if(resultFoundation.isNotEmpty) {
+      faceApplicationMap[FaceArea.CHEEKS][0].recommendedColors =
+      resultFoundation[0]['values']['colors'];
+      undertone = resultFoundation[0]['values']['undertone'];
+      faceApplicationMap[FaceArea.CHEEKS][0].recommendedColors.forEach(
+            (c) async {
+          List resultFoundationProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Foundation', 5);
+          faceApplicationMap[FaceArea.CHEEKS][0]
+              .addProducts(resultFoundationProduct, c['ColourAltHEX']);
+        },
+      );
+      centralColorMap[faceApplicationMap[FaceArea.CHEEKS][0].code] =
+      faceApplicationMap[FaceArea.CHEEKS][0].recommendedColors[0];
+    }
 
     List resultBronzer =
         await sfAPIGetRecommendedColours(uid, token, 'Bronzer');
-    faceApplicationMap[FaceArea.CHEEKS][1].recommendedColors =
-        resultBronzer[0]['values']['colors'];
-    faceApplicationMap[FaceArea.CHEEKS][1].recommendedColors.forEach(
-      (c) async {
-        List resultBronzerProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Bronzer', 5);
-        faceApplicationMap[FaceArea.CHEEKS][1]
-            .addProducts(resultBronzerProduct, c['ColourAltHEX']);
-      },
-    );
-    centralColorMap[faceApplicationMap[FaceArea.CHEEKS][1].code] =
-        faceApplicationMap[FaceArea.CHEEKS][1].recommendedColors[0];
+    if(resultBronzer.isNotEmpty) {
+      faceApplicationMap[FaceArea.CHEEKS][1].recommendedColors =
+      resultBronzer[0]['values']['colors'];
+      faceApplicationMap[FaceArea.CHEEKS][1].recommendedColors.forEach(
+            (c) async {
+          List resultBronzerProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Bronzer', 5);
+          faceApplicationMap[FaceArea.CHEEKS][1]
+              .addProducts(resultBronzerProduct, c['ColourAltHEX']);
+        },
+      );
+      centralColorMap[faceApplicationMap[FaceArea.CHEEKS][1].code] =
+      faceApplicationMap[FaceArea.CHEEKS][1].recommendedColors[0];
+    }
 
     List resultHighlighter =
         await sfAPIGetRecommendedColours(uid, token, 'Highligther');
-    faceApplicationMap[FaceArea.CHEEKS][2].recommendedColors =
-        resultHighlighter[0]['values']['colors'];
-    faceApplicationMap[FaceArea.CHEEKS][2].recommendedColors.forEach(
-      (c) async {
-        List resultHighlighterProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Highligther', 5);
-        faceApplicationMap[FaceArea.CHEEKS][2]
-            .addProducts(resultHighlighterProduct, c['ColourAltHEX']);
-      },
-    );
-    centralColorMap[faceApplicationMap[FaceArea.CHEEKS][2].code] =
-        faceApplicationMap[FaceArea.CHEEKS][2].recommendedColors[0];
+    if(resultHighlighter.isNotEmpty) {
+      faceApplicationMap[FaceArea.CHEEKS][2].recommendedColors =
+      resultHighlighter[0]['values']['colors'];
+      faceApplicationMap[FaceArea.CHEEKS][2].recommendedColors.forEach(
+            (c) async {
+          List resultHighlighterProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Highligther', 5);
+          faceApplicationMap[FaceArea.CHEEKS][2]
+              .addProducts(resultHighlighterProduct, c['ColourAltHEX']);
+        },
+      );
+      centralColorMap[faceApplicationMap[FaceArea.CHEEKS][2].code] =
+      faceApplicationMap[FaceArea.CHEEKS][2].recommendedColors[0];
+    }
 
     List resultBlusher =
         await sfAPIGetRecommendedColours(uid, token, 'Blusher');
-    faceApplicationMap[FaceArea.CHEEKS][3].recommendedColors =
-        resultBlusher[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.CHEEKS][3].code] =
-        faceApplicationMap[FaceArea.CHEEKS][3].recommendedColors[0];
-    faceApplicationMap[FaceArea.CHEEKS][3].recommendedColors.forEach(
-      (c) async {
-        List resultBlusherProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Blusher', 5);
-        faceApplicationMap[FaceArea.CHEEKS][3]
-            .addProducts(resultBlusherProduct, c['ColourAltHEX']);
-      },
-    );
+
+    if(resultBlusher.isNotEmpty) {
+      faceApplicationMap[FaceArea.CHEEKS][3].recommendedColors =
+      resultBlusher[0]['values']['colors'];
+      centralColorMap.value[faceApplicationMap[FaceArea.CHEEKS][3].code] =
+      faceApplicationMap[FaceArea.CHEEKS][3].recommendedColors[0];
+      faceApplicationMap[FaceArea.CHEEKS][3].recommendedColors.forEach(
+            (c) async {
+          List resultBlusherProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Blusher', 5);
+          faceApplicationMap[FaceArea.CHEEKS][3]
+              .addProducts(resultBlusherProduct, c['ColourAltHEX']);
+        },
+      );
+    }
 
     List resultConcealer =
         await sfAPIGetRecommendedColours(uid, token, 'Consealer');
-    faceApplicationMap[FaceArea.CHEEKS][4].recommendedColors =
-        resultConcealer[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.CHEEKS][4].code] =
-        faceApplicationMap[FaceArea.CHEEKS][4].recommendedColors[0];
-    faceApplicationMap[FaceArea.CHEEKS][4].recommendedColors.forEach(
-      (c) async {
-        List resultConcealerProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Consealer', 5);
-        faceApplicationMap[FaceArea.CHEEKS][4]
-            .addProducts(resultConcealerProduct, c['ColourAltHEX']);
-      },
-    );
+    if(resultConcealer.isNotEmpty) {
+      faceApplicationMap[FaceArea.CHEEKS][4].recommendedColors =
+      resultConcealer[0]['values']['colors'];
+      centralColorMap.value[faceApplicationMap[FaceArea.CHEEKS][4].code] =
+      faceApplicationMap[FaceArea.CHEEKS][4].recommendedColors[0];
+      faceApplicationMap[FaceArea.CHEEKS][4].recommendedColors.forEach(
+            (c) async {
+          List resultConcealerProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Consealer', 5);
+          faceApplicationMap[FaceArea.CHEEKS][4]
+              .addProducts(resultConcealerProduct, c['ColourAltHEX']);
+        },
+      );
+    }
 
     List resultEyelid = await sfAPIGetRecommendedColours(uid, token, 'Eyelid');
-    faceApplicationMap[FaceArea.EYES][0].recommendedColors =
+    if(resultEyelid.isNotEmpty) {
+      try {
+        faceApplicationMap[FaceArea.EYES][0].recommendedColors =
         resultEyelid[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.EYES][0].code] =
+        centralColorMap.value[faceApplicationMap[FaceArea.EYES][0].code] =
         faceApplicationMap[FaceArea.EYES][0].recommendedColors[0];
-    faceApplicationMap[FaceArea.EYES][0].recommendedColors.forEach(
-      (c) async {
-        List resultEyelidProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Eyelid', 5);
-        faceApplicationMap[FaceArea.EYES][0]
-            .addProducts(resultEyelidProduct, c['ColourAltHEX']);
-      },
-    );
+        faceApplicationMap[FaceArea.EYES][0].recommendedColors.forEach(
+              (c) async {
+            List resultEyelidProduct = await sfAPIFetchCentralColorProducts(
+                token, c['ColourAltHEX'], undertone, 'Eyelid', 5);
+            faceApplicationMap[FaceArea.EYES][0]
+                .addProducts(resultEyelidProduct, c['ColourAltHEX']);
+          },
+        );
+      }catch(e){
+
+      }
+    }
 
     List resultEyesocket =
         await sfAPIGetRecommendedColours(uid, token, 'Eyesocket');
-    faceApplicationMap[FaceArea.EYES][1].recommendedColors =
+    if(resultEyesocket.isNotEmpty) {
+      try {
+        faceApplicationMap[FaceArea.EYES][1].recommendedColors =
         resultEyesocket[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.EYES][1].code] =
+        centralColorMap.value[faceApplicationMap[FaceArea.EYES][1].code] =
         faceApplicationMap[FaceArea.EYES][1].recommendedColors[0];
-    faceApplicationMap[FaceArea.EYES][1].recommendedColors.forEach(
-      (c) async {
-        List resultEyesocketProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Eyesocket', 5);
-        faceApplicationMap[FaceArea.EYES][1]
-            .addProducts(resultEyesocketProduct, c['ColourAltHEX']);
-      },
-    );
+        faceApplicationMap[FaceArea.EYES][1].recommendedColors.forEach(
+              (c) async {
+            List resultEyesocketProduct = await sfAPIFetchCentralColorProducts(
+                token, c['ColourAltHEX'], undertone, 'Eyesocket', 5);
+            faceApplicationMap[FaceArea.EYES][1]
+                .addProducts(resultEyesocketProduct, c['ColourAltHEX']);
+          },
+        );
+      }catch(e){
+
+      }
+    }
 
     List resultOrbitalbone =
         await sfAPIGetRecommendedColours(uid, token, 'Orbital-bone');
-    faceApplicationMap[FaceArea.EYES][2].recommendedColors =
+    if(resultOrbitalbone.isNotEmpty) {
+      try {
+        faceApplicationMap[FaceArea.EYES][2].recommendedColors =
         resultOrbitalbone[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.EYES][2].code] =
+        centralColorMap.value[faceApplicationMap[FaceArea.EYES][2].code] =
         faceApplicationMap[FaceArea.EYES][2].recommendedColors[0];
-    faceApplicationMap[FaceArea.EYES][2].recommendedColors.forEach(
-      (c) async {
-        List resultOrbitalboneProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Orbital-bone', 5);
-        faceApplicationMap[FaceArea.EYES][2]
-            .addProducts(resultOrbitalboneProduct, c['ColourAltHEX']);
-      },
-    );
+        faceApplicationMap[FaceArea.EYES][2].recommendedColors.forEach(
+              (c) async {
+            List resultOrbitalboneProduct = await sfAPIFetchCentralColorProducts(
+                token, c['ColourAltHEX'], undertone, 'Orbital-bone', 5);
+            faceApplicationMap[FaceArea.EYES][2]
+                .addProducts(resultOrbitalboneProduct, c['ColourAltHEX']);
+          },
+        );
+      }catch(e){
+
+      }
+    }
 
     List resultEyeliner =
         await sfAPIGetRecommendedColours(uid, token, 'Eyeliner');
-    faceApplicationMap[FaceArea.EYES][3].recommendedColors =
-        resultEyeliner[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.EYES][3].code] =
-        faceApplicationMap[FaceArea.EYES][3].recommendedColors[0];
-    faceApplicationMap[FaceArea.EYES][3].recommendedColors.forEach(
-      (c) async {
-        List resultEyelinerProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Eyeliner', 5);
-        faceApplicationMap[FaceArea.EYES][3]
-            .addProducts(resultEyelinerProduct, c['ColourAltHEX']);
-      },
-    );
+    if(resultEyeliner.isNotEmpty) {
+      faceApplicationMap[FaceArea.EYES][3].recommendedColors =
+      resultEyeliner[0]['values']['colors'];
+      centralColorMap.value[faceApplicationMap[FaceArea.EYES][3].code] =
+      faceApplicationMap[FaceArea.EYES][3].recommendedColors[0];
+      faceApplicationMap[FaceArea.EYES][3].recommendedColors.forEach(
+            (c) async {
+          List resultEyelinerProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Eyeliner', 5);
+          faceApplicationMap[FaceArea.EYES][3]
+              .addProducts(resultEyelinerProduct, c['ColourAltHEX']);
+        },
+      );
+    }
 
     // Find the correct keyword
     List resultEyebrow =
         await sfAPIGetRecommendedColours(uid, token, 'Eyeliner');
-    faceApplicationMap[FaceArea.EYES][4].recommendedColors =
-        resultEyebrow[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.EYES][4].code] =
-        faceApplicationMap[FaceArea.EYES][4].recommendedColors[0];
-    faceApplicationMap[FaceArea.EYES][4].recommendedColors.forEach(
-      (c) async {
-        List resultEyebrowProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'Eyeliner', 5);
-        faceApplicationMap[FaceArea.EYES][4]
-            .addProducts(resultEyebrowProduct, c['ColourAltHEX']);
-      },
-    );
+    if(resultEyebrow.isNotEmpty) {
+      faceApplicationMap[FaceArea.EYES][4].recommendedColors =
+      resultEyebrow[0]['values']['colors'];
+      centralColorMap.value[faceApplicationMap[FaceArea.EYES][4].code] =
+      faceApplicationMap[FaceArea.EYES][4].recommendedColors[0];
+      faceApplicationMap[FaceArea.EYES][4].recommendedColors.forEach(
+            (c) async {
+          List resultEyebrowProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'Eyeliner', 5);
+          faceApplicationMap[FaceArea.EYES][4]
+              .addProducts(resultEyebrowProduct, c['ColourAltHEX']);
+        },
+      );
+    }
 
     // Find the correct keyword
     List resultLipstick =
         await sfAPIGetRecommendedColours(uid, token, 'lipliner');
-    faceApplicationMap[FaceArea.LIPS][0].recommendedColors =
-        resultLipstick[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.LIPS][0].code] =
-        faceApplicationMap[FaceArea.LIPS][0].recommendedColors[0];
-    faceApplicationMap[FaceArea.LIPS][0].recommendedColors.forEach(
-      (c) async {
-        List resultLipstickProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'lipliner', 5);
-        faceApplicationMap[FaceArea.LIPS][0]
-            .addProducts(resultLipstickProduct, c['ColourAltHEX']);
-      },
-    );
+    if(resultLipstick.isNotEmpty) {
+      faceApplicationMap[FaceArea.LIPS][0].recommendedColors =
+      resultLipstick[0]['values']['colors'];
+      centralColorMap.value[faceApplicationMap[FaceArea.LIPS][0].code] =
+      faceApplicationMap[FaceArea.LIPS][0].recommendedColors[0];
+      faceApplicationMap[FaceArea.LIPS][0].recommendedColors.forEach(
+            (c) async {
+          List resultLipstickProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'lipliner', 5);
+          faceApplicationMap[FaceArea.LIPS][0]
+              .addProducts(resultLipstickProduct, c['ColourAltHEX']);
+        },
+      );
+    }
 
     List resultLiner = await sfAPIGetRecommendedColours(uid, token, 'lipliner');
-    faceApplicationMap[FaceArea.LIPS][1].recommendedColors =
-        resultLiner[0]['values']['colors'];
-    centralColorMap.value[faceApplicationMap[FaceArea.LIPS][1].code] =
-        faceApplicationMap[FaceArea.LIPS][1].recommendedColors[0];
-    faceApplicationMap[FaceArea.LIPS][1].recommendedColors.forEach(
-      (c) async {
-        List resultLinerProduct = await sfAPIFetchCentralColorProducts(
-            token, c['ColourAltHEX'], undertone, 'lipliner', 5);
-        faceApplicationMap[FaceArea.LIPS][1]
-            .addProducts(resultLinerProduct, c['ColourAltHEX']);
-      },
-    );
+    if(resultLiner.isNotEmpty) {
+      faceApplicationMap[FaceArea.LIPS][1].recommendedColors =
+      resultLiner[0]['values']['colors'];
+      centralColorMap.value[faceApplicationMap[FaceArea.LIPS][1].code] =
+      faceApplicationMap[FaceArea.LIPS][1].recommendedColors[0];
+      faceApplicationMap[FaceArea.LIPS][1].recommendedColors.forEach(
+            (c) async {
+          List resultLinerProduct = await sfAPIFetchCentralColorProducts(
+              token, c['ColourAltHEX'], undertone, 'lipliner', 5);
+          faceApplicationMap[FaceArea.LIPS][1]
+              .addProducts(resultLinerProduct, c['ColourAltHEX']);
+        },
+      );
+    }
 
     this.colorsAreReady.value = true;
   }

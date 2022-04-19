@@ -35,12 +35,15 @@ Future<List> sfAPIGetRecommendedColours(
   request.headers.addAll(headers);
 
   http.StreamedResponse response = await request.send();
-
-  if (response.statusCode == 200) {
-    List responseBody = json.decode(await response.stream.bytesToString());
-    return responseBody;
-  } else {
-    throw await response.stream.bytesToString();
+  try {
+    if (response.statusCode == 200) {
+      List responseBody = json.decode(await response.stream.bytesToString());
+      return responseBody;
+    } else {
+      throw await response.stream.bytesToString();
+    }
+  } catch (e) {
+    return [];
   }
 }
 

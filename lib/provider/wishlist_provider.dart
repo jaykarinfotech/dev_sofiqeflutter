@@ -29,8 +29,12 @@ class WishListProvider extends GetxController {
   RxString userToken = ''.obs;
 
   WishListProvider() {
+    _initData();
+  }
+
+  _initData() async{
     this.defaults();
-    this.getUserToken();
+    await this.getUserToken();
   }
 
   ///

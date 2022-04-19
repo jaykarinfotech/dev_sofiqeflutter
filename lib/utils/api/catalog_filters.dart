@@ -4,6 +4,7 @@ import 'package:sofiqe/utils/constants/api_end_points.dart';
 import 'package:sofiqe/utils/constants/api_tokens.dart';
 
 import '../../model/CategoryResponse.dart';
+import '../../network_service/network_service.dart';
 
  ///
   /// Api Call Request sfAPIFetchFaceAreasAndParameters
@@ -42,28 +43,29 @@ Future<List> sfAPIFetchFaceAreasAndParameters(int faceArea) async {
 
 Future<CategoryResponse> sfAPIFetchFaceCategory() async {
   try {
-    Uri url = Uri.parse('${APIEndPoints.faceAreaCategory}');
+   /* Uri url = Uri.parse('${APIEndPoints.faceAreaCategory}');
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${APITokens.bearerToken}',
-    };
+    };*/
 
-    http.Request request = http.Request('GET', url);
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
+    http.Response? response = await NetworkHandler.getMethodCall(
+        url:
+        '${APIEndPoints.faceAreaCategory}',
+        headers: APIEndPoints.headers(APITokens.bearerToken));
+    print("after api  ${response!.statusCode}");
 
     if (response.statusCode != 200) {
-      throw await response.stream.bytesToString();
+      throw json.decode(response.body);
+    }else{
+      print("category response");
+      print(response.statusCode);
+      CategoryResponse responseBody = CategoryResponse.fromJson(json.decode(response.body));
+      return responseBody;
     }
-    print("categopry response");
-    print(response.statusCode);
-
-    CategoryResponse responseBody = CategoryResponse.fromJson(json.decode(await response.stream.bytesToString()));
-    return responseBody;
   } catch (err) {
     print(err.toString());
-    rethrow;
+    throw 'Error in category api';
   }
 }
 
@@ -77,22 +79,28 @@ Future<CategoryResponse> sfAPIFetchFaceCategory() async {
   /// 
 Future<List> sfAPIGetBrandNames(String faceArea) async {
   try {
-    Uri url = Uri.parse('${APIEndPoints.brandNames}${faceArea.isEmpty ? '' : '?face_area=$faceArea'}');
+   /* Uri url = Uri.parse('${APIEndPoints.brandNames}${faceArea.isEmpty ? '' : '?face_area=$faceArea'}');
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${APITokens.bearerToken}',
-    };
+    };*/
 
-    http.Request request = http.Request('GET', url);
-    request.headers.addAll(headers);
+    http.Response? response = await NetworkHandler.getMethodCall(
+        url:
+        '${APIEndPoints.brandNames}${faceArea.isEmpty ? '' : '?face_area=$faceArea'}',
+        headers: APIEndPoints.headers(APITokens.bearerToken));
+    print("after api  ${response!.statusCode}");
 
-    http.StreamedResponse response = await request.send();
+    // http.Request request = http.Request('GET', url);
+    // request.headers.addAll(headers);
+
+    // http.StreamedResponse response = await request.send();
 
     if (response.statusCode != 200) {
-      throw await response.stream.bytesToString();
+      throw response.body;
     }
 
-    List responseBody = json.decode(await response.stream.bytesToString());
+    List responseBody = json.decode(response.body);
 
     return responseBody;
   } catch (err) {

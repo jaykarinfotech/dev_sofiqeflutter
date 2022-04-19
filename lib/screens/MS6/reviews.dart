@@ -1,7 +1,10 @@
+//Code corrected by Ashwani on 14-04-2022, reviews were not properly synced
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sofiqe/controller/reviewController.dart';
 import 'package:sofiqe/provider/account_provider.dart';
 import 'package:sofiqe/provider/page_provider.dart';
@@ -11,7 +14,9 @@ import 'package:sofiqe/widgets/cart/empty_bag.dart';
 
 import '../../provider/cart_provider.dart';
 import '../../utils/constants/route_names.dart';
+import '../../widgets/capsule_button.dart';
 import '../../widgets/product_detail/order_notification.dart';
+import '../my_sofiqe.dart';
 import '../product_detail_1_screen.dart';
 import 'package:sofiqe/model/product_model.dart' as product;
 
@@ -45,6 +50,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     var cartItems = Provider.of<CartProvider>(context).itemCount;
     return ScreenUtilInit(
         designSize: Size(360, 690),
@@ -66,7 +72,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                               fit: BoxFit.cover)),
                       child: Stack(
                         alignment: Alignment.center,
-                      //  mainAxisAlignment: MainAxisAlignment.center,
+                        //  mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Row(
                             children: [
@@ -105,7 +111,8 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                 Navigator.pushNamed(
                                     context, RouteNames.cartScreen);
                               },
-                              child: Stack( alignment: Alignment.topRight,
+                              child: Stack(
+                                alignment: Alignment.topRight,
                                 children: [
                                   Container(
                                     margin: EdgeInsets.only(right: 15),
@@ -121,22 +128,21 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                       ),
                                     ),
                                   ),
-                                  cartItems == 0 ? SizedBox() :
-                                  Container(
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red
-                                      ),
-                                      padding: EdgeInsets.all(5),
-                                      child: Text(
-                                          cartItems.toString()
-                                      )
-                                  )
+                                  cartItems == 0
+                                      ? SizedBox()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white),
+                                          padding: EdgeInsets.all(5),
+                                          child: Text(
+                                            cartItems.toString(),
+                                            style: TextStyle(color: Colors.red),
+                                          ))
                                 ],
                               ),
                             ),
                           )
-
                         ],
                       ),
                     ),
@@ -238,21 +244,40 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                     alignment: Alignment.center,
                                     child: CircularProgressIndicator(),
                                   )
-                                :wshCntrl.wishlistModel != null || wshCntrl.wishlistModel!.result!.length > 0
+                                : wshCntrl.wishlistModel != null ||
+                                        wshCntrl.wishlistModel!.result!.length >
+                                            0
                                     ? Column(
                                         children: [
                                           Container(
                                             width: double.infinity,
                                             height: Get.width * 0.10,
-                                            color: Color(0xffF4F2F0),
-                                            child: Center(
-                                              child: Text(
-                                                'YOU ARE SAVVY! ${wshCntrl.wishlistModel!.result!.length} DIFFERENT MAKEUPS',
-                                                style: TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                                            color: Colors.grey,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Center(
+                                                    child: Text(
+                                                      'YOU ARE SAVVY! ${wshCntrl.wishlistModel!.result!.length} DIFFERENT MAKEUPS',
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: GestureDetector(
+                                                    child: Icon(Icons.share,
+                                                        color: Colors.blueGrey),
+                                                    onTap: () {
+                                                      showShareDialog(context);
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           ListView.builder(
@@ -265,10 +290,8 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                               try {
                                                 wshCntrl.wishlistModel!
                                                     .result![i].review!
-                                                    .forEach((element) {
-                                                });
-                                              } catch (e) {
-                                              }
+                                                    .forEach((element) {});
+                                              } catch (e) {}
                                               return Container(
                                                 color: Colors.white,
                                                 child: Column(
@@ -298,9 +321,9 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                         color: Colors
                                                                             .black,
                                                                         fontSize:
-                                                                            10,
+                                                                            12,
                                                                         fontWeight:
-                                                                            FontWeight.bold),
+                                                                            FontWeight.w500),
                                                                   ),
                                                                   // Row(
                                                                   //   children: [
@@ -336,14 +359,12 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                         listen:
                                                                             false)
                                                                     .isLoggedIn) {
-                                                                  if (await wp.removeItemToWishList(
-                                                                      wshCntrl
-                                                                          .wishlistModel!
-                                                                          .result![
-                                                                              i]
-                                                                          .product!
-                                                                          .sku!
-                                                                      )) {
+                                                                  if (await wp.removeItemToWishList(wshCntrl
+                                                                      .wishlistModel!
+                                                                      .result![
+                                                                          i]
+                                                                      .product!
+                                                                      .sku!)) {
                                                                     wshCntrl.wishlistModel!.result!.removeWhere((element) =>
                                                                         element
                                                                             .wishlistItemId ==
@@ -381,6 +402,30 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                   color: Colors
                                                                       .red,
                                                                 )),
+                                                          ),
+                                                          GestureDetector(
+                                                            child: Icon(
+                                                                Icons.share,
+                                                                color: Colors
+                                                                    .grey),
+                                                            onTap: () {
+                                                              Share.share(
+                                                                  APIEndPoints
+                                                                          .shareBaseUrl +
+                                                                      wshCntrl
+                                                                          .wishlistModel!
+                                                                          .result![
+                                                                              i]
+                                                                          .product!
+                                                                          .requestPath
+                                                                          .toString(),
+                                                                  subject: wshCntrl
+                                                                      .wishlistModel!
+                                                                      .result![
+                                                                          i]
+                                                                      .product!
+                                                                      .name);
+                                                            },
                                                           ),
                                                           GestureDetector(
                                                             onTap: () {
@@ -421,121 +466,128 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                           ),
                                                           GestureDetector(
                                                             onTap: () async {
-                                                              if (wshCntrl
+                                                              // if (wshCntrl
+                                                              //             .wishlistModel!
+                                                              //             .result![
+                                                              //                 i]
+                                                              //             .product!
+                                                              //             .options !=
+                                                              //         null &&
+                                                              //     wshCntrl
+                                                              //         .wishlistModel!
+                                                              //         .result![
+                                                              //             i]
+                                                              //         .product!
+                                                              //         .options!
+                                                              //         .isNotEmpty) {
+                                                              //   Navigator.push(
+                                                              //     context,
+                                                              //     MaterialPageRoute(
+                                                              //       builder:
+                                                              //           (BuildContext
+                                                              //               c) {
+                                                              //         return ProductDetail1Screen(
+                                                              //             sku: wshCntrl
+                                                              //                 .wishlistModel!
+                                                              //                 .result![i]
+                                                              //                 .product!
+                                                              //                 .sku!);
+                                                              //       },
+                                                              //     ),
+                                                              //   );
+                                                              // } else {
+                                                              CartProvider
+                                                                  cartP =
+                                                                  Provider.of<
+                                                                          CartProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false);
+                                                              //   print("CartProvider  -->> SSs ${cartP.cartToken}");
+                                                              await cartP.addHomeProductsToCart(context, product
+                                                                  .Product(
+                                                                      name: wshCntrl
                                                                           .wishlistModel!
                                                                           .result![
                                                                               i]
                                                                           .product!
-                                                                          .options !=
-                                                                      null &&
-                                                                  wshCntrl
-                                                                      .wishlistModel!
-                                                                      .result![
-                                                                          i]
-                                                                      .product!
-                                                                      .options!
-                                                                      .isNotEmpty) {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (BuildContext
-                                                                            c) {
-                                                                      return ProductDetail1Screen(
-                                                                          sku: wshCntrl
-                                                                              .wishlistModel!
-                                                                              .result![i]
-                                                                              .product!
-                                                                              .sku!);
-                                                                    },
-                                                                  ),
-                                                                );
-                                                              } else {
-                                                                CartProvider
-                                                                    cartP =
-                                                                    Provider.of<
-                                                                            CartProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false);
-                                                                //   print("CartProvider  -->> SSs ${cartP.cartToken}");
-                                                                await cartP.addHomeProductsToCart(product
-                                                                    .Product(
-                                                                        name: wshCntrl
+                                                                          .name,
+                                                                      id: int
+                                                                          .parse(
+                                                                        wshCntrl
                                                                             .wishlistModel!
-                                                                            .result![
-                                                                                i]
-                                                                            .product!
-                                                                            .name,
-                                                                        id: int
-                                                                            .parse(
-                                                                          wshCntrl
-                                                                              .wishlistModel!
-                                                                              .result![i]
-                                                                              .productId
-                                                                              .toString(),
-                                                                        ),
-                                                                        image: wshCntrl.wishlistModel!.result![i].product!.image
+                                                                            .result![i]
+                                                                            .productId
                                                                             .toString(),
-                                                                        price: double.parse(wshCntrl
-                                                                            .wishlistModel!
-                                                                            .result![
-                                                                                i]
-                                                                            .product!
-                                                                            .price
-                                                                            .toString()),
-                                                                        sku: wshCntrl
-                                                                            .wishlistModel!
-                                                                            .result![i]
-                                                                            .product!
-                                                                            .sku
-                                                                            .toString(),
-                                                                        color: wshCntrl.wishlistModel!.result![i].product!.shadeColor.toString(),
-                                                                        description: wshCntrl.wishlistModel!.result![i].product!.shortDescription.toString(),
-                                                                        faceSubArea: 0,avgRating: "0.0"));
-                                                                print(
-                                                                    "Name  -->> EEE ${wshCntrl.wishlistModel!.result![i].product!.image}");
-
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                  SnackBar(
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .all(0),
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .black,
-                                                                    duration: Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    content:
-                                                                        Container(
-                                                                      child:
-                                                                          CustomSnackBar(
-                                                                        sku: wshCntrl
-                                                                            .wishlistModel!
-                                                                            .result![i]
-                                                                            .product!
-                                                                            .sku!,
-                                                                        image: wshCntrl
-                                                                            .wishlistModel!
-                                                                            .result![
-                                                                                i]
-                                                                            .product!
-                                                                            .image!
-                                                                            .replaceAll(RegExp('https://dev.sofiqe.com/media/catalog/product'),
-                                                                                ''),
-                                                                        name: wshCntrl
-                                                                            .wishlistModel!
-                                                                            .result![i]
-                                                                            .product!
-                                                                            .name!,
                                                                       ),
+                                                                      image: wshCntrl
+                                                                          .wishlistModel!
+                                                                          .result![
+                                                                              i]
+                                                                          .product!
+                                                                          .image
+                                                                          .toString(),
+                                                                      price: double.parse(
+                                                                          wshCntrl.wishlistModel!.result![i].product!.price
+                                                                              .toString()),
+                                                                      sku: wshCntrl
+                                                                          .wishlistModel!
+                                                                          .result![i]
+                                                                          .product!
+                                                                          .sku
+                                                                          .toString(),
+                                                                      color: wshCntrl.wishlistModel!.result![i].product!.shadeColor.toString(),
+                                                                      description: wshCntrl.wishlistModel!.result![i].product!.shortDescription.toString(),
+                                                                      faceSubArea: 0,
+                                                                      avgRating: "0.0"));
+                                                              print(
+                                                                  "Name  -->> EEE ${wshCntrl.wishlistModel!.result![i].product!.image}");
+
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              0),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .black,
+                                                                  duration:
+                                                                      Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                  content:
+                                                                      Container(
+                                                                    child:
+                                                                        CustomSnackBar(
+                                                                      sku: wshCntrl
+                                                                          .wishlistModel!
+                                                                          .result![
+                                                                              i]
+                                                                          .product!
+                                                                          .sku!,
+                                                                      image: wshCntrl
+                                                                          .wishlistModel!
+                                                                          .result![
+                                                                              i]
+                                                                          .product!
+                                                                          .image!
+                                                                          .replaceAll(
+                                                                              RegExp('https://dev.sofiqe.com/media/catalog/product'),
+                                                                              ''),
+                                                                      name: wshCntrl
+                                                                          .wishlistModel!
+                                                                          .result![
+                                                                              i]
+                                                                          .product!
+                                                                          .name!,
                                                                     ),
                                                                   ),
-                                                                );
-                                                              }
+                                                                ),
+                                                              );
+                                                              // }
                                                               // reviewController
                                                               //     .productAddtoBag(wshCntrl
                                                               //         .wishlistModel!
@@ -597,10 +649,9 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                         ? Container(
                                             height: Get.height * 0.5,
                                             width: Get.width,
-                                            child: Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ))
+                                            alignment: Alignment.center,
+                                            child: CircularProgressIndicator(),
+                                          )
                                         : reviewController.myReviewModel!.items!
                                                     .length >
                                                 0
@@ -609,7 +660,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                   Container(
                                                     width: double.infinity,
                                                     height: Get.width * 0.10,
-                                                    color: Color(0xffF4F2F0),
+                                                    color: Colors.grey,
                                                     child: Center(
                                                       child: Text(
                                                         'YOU ARE SAVVY! ${reviewController.myReviewModel!.items!.length} DIFFERENT MAKEUPS',
@@ -630,29 +681,8 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                       shrinkWrap: true,
                                                       physics:
                                                           NeverScrollableScrollPhysics(),
-                                                      itemBuilder: (ctx, ii) {
-                                                        int rate = 0;
-                                                        try {
-                                                          reviewController
-                                                              .myReviewModel!
-                                                              .items![ii]
-                                                              .ratings!
-                                                              .forEach(
-                                                                  (element) {
-                                                            rate +=
-                                                                element.value!;
-                                                          });
-                                                        } catch (e) {
-                                                          rate = 0;
-                                                        }
-                                                        // reviewController.getMyRiviewsBySkuData(reviewController
-                                                        //     .myReviewModel!
-                                                        //     .items![ii].sku.toString()).then((value) {
-                                                        //     if(value != false){
-                                                        //       print('getMyRiviewsBySkuData lllllll ${reviewController.myReviewBySkuModel!.name.toString()}');
-                                                        //     }
-                                                        //   });
-
+                                                      itemBuilder:
+                                                          (ctx, index1) {
                                                         return Container(
                                                           margin:
                                                               EdgeInsets.only(
@@ -680,7 +710,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                           Align(
                                                                               alignment: Alignment.centerLeft,
                                                                               child: Text(
-                                                                                reviewController.reviewName.isNotEmpty && reviewController.reviewName.length>ii  ?"${reviewController.reviewName[ii].toString()}": ''  ,
+                                                                                reviewController.reviewName.isNotEmpty && reviewController.reviewName.length > index1 ? "${reviewController.reviewName[index1].name.toString()}" : '',
                                                                                 // "${reviewController.myReviewModel!.items![ii].title}",
                                                                                 style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500),
                                                                               )),
@@ -693,43 +723,57 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                               SizedBox(
                                                                                 width: 5,
                                                                               ),
-                                                                              Text(rate.toString())
+                                                                              Text(reviewController.myReviewModel!.items![index1].ratings!.length.toString())
                                                                             ],
                                                                           )
                                                                         ],
                                                                       ),
                                                                     ),
                                                                     GestureDetector(
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .share,
+                                                                          color:
+                                                                              Colors.grey),
                                                                       onTap:
                                                                           () {
-                                                                        Navigator
-                                                                            .push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                            builder:
-                                                                                (BuildContext c) {
-                                                                              return ProductDetail1Screen(sku: reviewController.myReviewModel!.items![ii].storeId!.toString());
-                                                                            },
-                                                                          ),
-                                                                        );
+                                                                        Share.share(
+                                                                            reviewController.myReviewModel!.items![index1].productUrl!,
+                                                                            subject: reviewController.reviewName[index1].name.toString());
                                                                       },
-                                                                      child: Container(
-                                                                          width: Get.width * 0.3,
-                                                                          child: reviewController.reviewImage.isNotEmpty&& reviewController.reviewImage.length>ii?Image.network(
-                                                                            // 'assets/images/product.png',
-                                                                            APIEndPoints.mediaBaseUrl +
-                                                                                "${reviewController.reviewImage[ii]}",
-                                                                            width:
-                                                                            72,
-                                                                            height:
-                                                                            72,
-                                                                          ):Container() )
                                                                     ),
+                                                                    GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (BuildContext c) {
+                                                                                return ProductDetail1Screen(sku: reviewController.myReviewModel!.items![index1].sku!.toString());
+                                                                              },
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        child: Container(
+                                                                            width: Get.width * 0.25,
+                                                                            child: reviewController.reviewName[index1].imagePath != ''
+                                                                                ? Image.network(
+                                                                                    // 'assets/images/product.png',
+                                                                                    APIEndPoints.mediaBaseUrl + "${reviewController.reviewName[index1].imagePath}",
+                                                                                    width: 72,
+                                                                                    height: 72,
+                                                                                  )
+                                                                                : Image.network(
+                                                                                    APIEndPoints.mediaBaseUrl + "null",
+                                                                                    width: 72,
+                                                                                    height: 72,
+                                                                                  ))),
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () async {
-                                                                        await Provider.of<CartProvider>(context, listen: false).addToCart(
-                                                                            reviewController.myReviewModel!.items![ii].sku!,
+                                                                        await Provider.of<CartProvider>(context, listen: false).addToCart(context,
+                                                                            reviewController.myReviewModel!.items![index1].sku!,
                                                                             [],
                                                                             1);
                                                                         ScaffoldMessenger.of(context)
@@ -744,9 +788,9 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                               Container(
                                                                             child:
                                                                                 CustomSnackBar(
-                                                                              sku: reviewController.myReviewModel!.items![ii].sku!,
-                                                                              image: reviewController.myReviewModel!.items![ii].image.toString(),
-                                                                              name: reviewController.myReviewModel!.items![ii].nickname!,
+                                                                              sku: reviewController.myReviewModel!.items![index1].sku!,
+                                                                              image: reviewController.reviewName[index1].imagePath.toString(),
+                                                                              name: reviewController.reviewName[index1].name!,
                                                                             ),
                                                                           ),
                                                                         ));
@@ -802,7 +846,10 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                 return Container(
                                     alignment: Alignment.center,
                                     child: (reviewController.isGlobaleReviews)
-                                        ? Center(
+                                        ? Container(
+                                            height: Get.height * 0.5,
+                                            width: Get.width,
+                                            alignment: Alignment.center,
                                             child: CircularProgressIndicator(),
                                           )
                                         : reviewController.reviewModel!.items!
@@ -816,8 +863,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                         width: double.infinity,
                                                         height:
                                                             Get.width * 0.10,
-                                                        color:
-                                                            Color(0xffF4F2F0),
+                                                        color: Colors.grey,
                                                         child: Center(
                                                           child: Text(
                                                             'YOU ARE SAVVY! ${reviewController.reviewModel!.items!.length} DIFFERENT MAKEUPS',
@@ -839,21 +885,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                           physics:
                                                               NeverScrollableScrollPhysics(),
                                                           itemBuilder:
-                                                              (ctx, ii) {
-                                                            int rate = 0;
-                                                            try {
-                                                              reviewController
-                                                                  .reviewModel!
-                                                                  .items![ii]
-                                                                  .ratings!
-                                                                  .forEach(
-                                                                      (element) {
-                                                                rate += element
-                                                                    .value!;
-                                                              });
-                                                            } catch (e) {
-                                                              rate = 0;
-                                                            }
+                                                              (ctx, index2) {
                                                             return Container(
                                                               margin: EdgeInsets
                                                                   .only(
@@ -880,9 +912,9 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                               Align(
                                                                                   alignment: Alignment.centerLeft,
                                                                                   child: Text(
-                                                                                    reviewController.reviewGlobaleName.isNotEmpty && reviewController.reviewGlobaleName.length>ii  ?  "${reviewController.reviewGlobaleName[ii]}":"",
-                                                                                   // "${reviewController.reviewModel!.items![ii].title}",
-                                                                                    style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
+                                                                                    reviewController.reviewGlobaleName.isNotEmpty && reviewController.reviewGlobaleName.length > index2 ? "${reviewController.reviewGlobaleName[index2].name}" : "",
+                                                                                    // "${reviewController.reviewModel!.items![ii].title}",
+                                                                                    style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500),
                                                                                   )),
                                                                               Row(
                                                                                 children: [
@@ -893,11 +925,21 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                                   SizedBox(
                                                                                     width: 5,
                                                                                   ),
-                                                                                  Text(rate.toString())
+                                                                                  Text(reviewController.reviewModel!.items![index2].ratings!.length.toString())
                                                                                 ],
                                                                               )
                                                                             ],
                                                                           ),
+                                                                        ),
+                                                                        GestureDetector(
+                                                                          child: Icon(
+                                                                              Icons.share,
+                                                                              color: Colors.grey),
+                                                                          onTap:
+                                                                              () {
+                                                                            Share.share(reviewController.reviewModel!.items![index2].productUrl!,
+                                                                                subject: reviewController.reviewGlobaleName[index2].name.toString());
+                                                                          },
                                                                         ),
                                                                         GestureDetector(
                                                                           onTap:
@@ -906,25 +948,31 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                               context,
                                                                               MaterialPageRoute(
                                                                                 builder: (BuildContext c) {
-                                                                                  return ProductDetail1Screen(sku: reviewController.reviewModel!.items![ii].storeId.toString());
+                                                                                  return ProductDetail1Screen(sku: reviewController.reviewModel!.items![index2].sku!.toString());
                                                                                 },
                                                                               ),
                                                                             );
                                                                           },
                                                                           child: Container(
-                                                                              width: Get.width * 0.3,
-                                                                              child: reviewController.reviewGlobaleImage.isEmpty&& reviewController.reviewGlobaleImage.length>ii?Image.network(
-                                                                                // 'assets/images/product.png',
-                                                                                APIEndPoints.mediaBaseUrl + "${reviewController.reviewGlobaleImage[ii]}",
-                                                                                width: 72,
-                                                                                height: 72,
-                                                                              ):Container() ),
+                                                                              width: Get.width * 0.25,
+                                                                              child: reviewController.reviewGlobaleName[index2].imagePath != ''
+                                                                                  ? Image.network(
+                                                                                      // 'assets/images/product.png',
+                                                                                      APIEndPoints.mediaBaseUrl + "${reviewController.reviewGlobaleName[index2].imagePath}",
+                                                                                      width: 72,
+                                                                                      height: 72,
+                                                                                    )
+                                                                                  : Image.network(
+                                                                                      APIEndPoints.mediaBaseUrl + "null",
+                                                                                      width: 72,
+                                                                                      height: 72,
+                                                                                    )),
                                                                         ),
                                                                         GestureDetector(
                                                                           onTap:
                                                                               () async {
-                                                                            await Provider.of<CartProvider>(context, listen: false).addToCart(
-                                                                                reviewController.reviewModel!.items![ii].sku!,
+                                                                            await Provider.of<CartProvider>(context, listen: false).addToCart(context,
+                                                                                reviewController.reviewModel!.items![index2].sku!,
                                                                                 [],
                                                                                 1);
                                                                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -933,9 +981,9 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                               duration: Duration(seconds: 1),
                                                                               content: Container(
                                                                                 child: CustomSnackBar(
-                                                                                  sku: reviewController.reviewModel!.items![ii].sku!,
-                                                                                  image: reviewController.reviewModel!.items![ii].image.toString(),
-                                                                                  name: reviewController.reviewModel!.items![ii].nickname!,
+                                                                                  sku: reviewController.reviewModel!.items![index2].sku!,
+                                                                                  image: reviewController.reviewGlobaleName[index2].imagePath.toString(),
+                                                                                  name: reviewController.reviewGlobaleName[index2].name!,
                                                                                 ),
                                                                               ),
                                                                             ));
@@ -965,21 +1013,6 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                 ],
                                                               ),
                                                             );
-
-                                                            // return ListView.builder(
-                                                            //   itemCount:
-                                                            //       reviewController
-                                                            //           .reviewModel!
-                                                            //           .items![ii]
-                                                            //           .ratings!
-                                                            //           .length,
-                                                            //   shrinkWrap: true,
-                                                            //   physics:
-                                                            //       NeverScrollableScrollPhysics(),
-                                                            //   itemBuilder: (ctx, i) {
-
-                                                            //   },
-                                                            // );
                                                           }),
                                                     ],
                                                   ),
@@ -994,7 +1027,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                   pp.goToPage(Pages.SHOP);
                                                 },
                                                 emptyBagButtonText:
-                                                    'Go TO SHOPPING',
+                                                    'GO TO SHOPPING',
                                               ) /*Container(
                                                 child: Center(
                                                   child: Text(
@@ -1027,5 +1060,142 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                 ),
               ),
             )));
+  }
+
+  Future showShareDialog(BuildContext context) {
+    String message = '';
+    String mails = '';
+    Size size = MediaQuery.of(context).size;
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: HexColor("#EB7AC1"),
+            contentPadding: EdgeInsets.zero,
+            insetPadding: EdgeInsets.all(10),
+            content: Stack(
+              overflow: Overflow.visible,
+              children: <Widget>[
+                Form(
+                  child: Container(
+                    height: 400,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          color: HexColor("#EB7AC1"),
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 30,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Center(
+                                    child: Text(
+                                  'SHARE WISHLIST',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1),
+                                )),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 10),
+                          child: Column(
+                            children: [
+                              TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    message = value.toString();
+                                  });
+                                },
+                                controller: null,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(20.0),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  border: OutlineInputBorder(),
+                                  labelText:
+                                      'Please write a message to your friend',
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    mails = value.toString();
+                                  });
+                                },
+                                controller: null,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.all(20.0),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  border: OutlineInputBorder(),
+                                  labelText:
+                                      'Add email, if more than one, please comma separate them',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: CapsuleButton(
+                            backgroundColor: Colors.white,
+                            borderColor: Color(0xFF393636),
+                            onPress: () async {
+                              if (mails.isNotEmpty) {
+                                await reviewController.shareWishlist(
+                                    mails, message);
+                                Navigator.pop(context);
+                              } else {
+                                Get.showSnackbar(
+                                  GetBar(
+                                    message: 'Please enter required details.',
+                                    duration: Duration(seconds: 2),
+                                    isDismissible: true,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Text(
+                              'Share Wishlist',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 1),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

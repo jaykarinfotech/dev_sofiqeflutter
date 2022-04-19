@@ -57,7 +57,7 @@ sfAPIgetIngredients() async {
   try {
     http.Response? response = await NetworkHandler.getMethodCall(
         url: 'https://dev.sofiqe.com/rest/V1/ingredients',
-        headers: APIEndPoints.headers('n0y2a0zdfd2xwk24d4c2ucslncm9qovv'));
+        headers: APIEndPoints.headers('Bearer n0y2a0zdfd2xwk24d4c2ucslncm9qovv'));
     print("after api  ${response!.statusCode}");
 
     if (response.statusCode == 200) {
@@ -71,10 +71,11 @@ sfAPIgetIngredients() async {
       return ingredientslist;
     } else {
       print("ERROR");
+      return ingredientslist;
     }
   } catch (e) {
     debugPrint(e.toString());
-    rethrow;
+    //rethrow;
   }
 }
 

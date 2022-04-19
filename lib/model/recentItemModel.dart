@@ -137,6 +137,8 @@ class Items {
       this.dealDiscountType,
       this.smFeatured});
 
+
+  //null values not handled... changed by Ashwani on 13-04-2022
   Items.fromJson(Map<String, dynamic> json) {
     id = json['id'] == null ? '' : json['id'];
     sku = json['sku'] == null ? '' : json['sku'];

@@ -349,7 +349,7 @@ class _OfferDetails extends StatelessWidget {
                       CartProvider cartP =
                       Provider.of<CartProvider>(context, listen: false);
                       print("CartProvider  -->> SSs ${cartP.cartToken}");
-                      await cartP.addHomeProductsToCart(product);
+                      await cartP.addHomeProductsToCart(context, product);
                       print("Name  -->> EEE ${product.image}");
 
                       ScaffoldMessenger.of(context).showSnackBar(

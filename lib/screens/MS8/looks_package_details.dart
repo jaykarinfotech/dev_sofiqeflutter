@@ -125,27 +125,32 @@ class _LookPackageMS8State extends State<LookPackageMS8> {
                         SizedBox(
                           height: Get.height * 0.07,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(),
-                            Text(
-                              contrl.ms8model!.lookDescription! //"BOMBSHELL"
-                              ,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                            IconButton(
-                              onPressed: () {
-
-
-                              },
-                              icon: Icon(
-                                Icons.favorite,
-                                color: Colors.grey[300],
+                        Padding(
+                          padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  contrl.ms8model!.lookDescription! //"BOMBSHELL"
+                                  ,
+                                  style:
+                                      TextStyle(color: Colors.white, fontSize: 18, overflow: TextOverflow.ellipsis),
+                                ),
                               ),
-                            )
-                          ],
+                              IconButton(
+                                onPressed: () {
+
+
+                                },
+                                icon: Icon(
+                                  Icons.favorite,
+                                  color: Colors.grey[300],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: Get.height * 0.07,

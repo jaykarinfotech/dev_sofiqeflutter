@@ -32,7 +32,7 @@ class MyReviewSkuModel {
   String? sku;
   String? name;
   int? attributeSetId;
-  int? price;
+  double? price;
   int? status;
   int? visibility;
   String? typeId;
@@ -50,7 +50,7 @@ class MyReviewSkuModel {
     sku: json["sku"] == null ? null : json["sku"],
     name: json["name"] == null ? null : json["name"],
     attributeSetId: json["attribute_set_id"] == null ? null : json["attribute_set_id"],
-    price: json["price"] == null ? null : json["price"],
+    price: double.parse(json["price"].toString()) == null ? null : double.parse(json["price"].toString()),
     status: json["status"] == null ? null : json["status"],
     visibility: json["visibility"] == null ? null : json["visibility"],
     typeId: json["type_id"] == null ? null : json["type_id"],

@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sofiqe/controller/looksController.dart';
 import 'package:sofiqe/screens/MS8/looks_package_details.dart';
 import 'package:sofiqe/widgets/makeover/total_make_over/make_over_try_on.dart';
 
+import '../../provider/account_provider.dart';
 import '../../provider/cart_provider.dart';
 import '../../utils/constants/route_names.dart';
 import '../../widgets/png_icon.dart';
 import '../../widgets/product_detail/order_notification.dart';
 import '../../widgets/wishlist.dart';
+import '../my_sofiqe.dart';
 import '../premium_subscription_screen.dart';
 
 class LooksScreen extends StatefulWidget {
@@ -24,6 +27,7 @@ class _LooksScreenState extends State<LooksScreen> {
   LooksController looksController = Get.put(LooksController());
   bool isLoading = false;
 
+
   @override
   void initState() {
     looksController.getLookList();
@@ -32,81 +36,86 @@ class _LooksScreenState extends State<LooksScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var cartItems = Provider.of<CartProvider>(context).itemCount;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      // appBar: AppBar(
-      //     backgroundColor: Colors.black,
-      //     elevation: 0.0,
-      //     leading: InkWell(
-      //         onTap: () => Get.back(),
-      //         child: Icon(
-      //           Icons.close,
-      //           size: 30,
-      //         )),
-      //     centerTitle: true,
-      //     title: Text(
-      //       'MY SHOPPING',
-      //       style: TextStyle(
-      //         fontSize: 12,
-      //       ),
-      //     )),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(size.width * 0.23),
-        child: AppBar(
-          backgroundColor: Colors.black,
-          elevation: 0.0,
-          leading: Container(
-            width: size.width * 0.20,
-            height: size.width * 0.20,
-            //padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: BackButtonApp(
-              flowFromMs: false,
-              child: Transform.rotate(
-                angle: 3.1439,
-                child: PngIcon(
-                  color: Colors.white,
-                  image: 'assets/icons/arrow-2-white.png',
-                ),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0.0,
+        leading: Container(
+          // width: size.width * 0.20,
+          // height: size.width * 0.20,
+          //padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: BackButtonApp(
+            flowFromMs: false,
+            child: Transform.rotate(
+              angle: 3.1439,
+              child: PngIcon(
+                color: Colors.white,
+                image: 'assets/icons/arrow-2-white.png',
               ),
             ),
           ),
-          centerTitle: true,
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                'sofiqe',
-                style: Theme.of(context).textTheme.headline1!.copyWith(
-                      color: Colors.white,
-                      fontSize: size.height * 0.035,
-                    ),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'LOOKS',
-                style: TextStyle(fontSize: 12, color: Colors.white),
-              ),
-            ],
-          ),
-          actions: [
-            GestureDetector(
-              onTap: (){
-                Navigator.pushNamed(context, RouteNames.cartScreen);
-              },
-              child: Container(
-                height: 40,
-                width: 40,
-                margin: EdgeInsets.only(right: 20, bottom: 5),
-                decoration:
-                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: Image.asset(
-                  'assets/images/Path_6.png',
-                  color: Colors.black,
-                ),
-              ),
+        ),
+        centerTitle: true,
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              'sofiqe',
+              style: Theme.of(context).textTheme.headline1!.copyWith(
+                  color: Colors.white,
+                  fontSize: size.height * 0.035,
+                  letterSpacing: 0.6),
+            ),
+            //SizedBox(height: 5),
+            Text(
+              'LOOKS',
+              style: TextStyle(fontSize: 12, color: Colors.white),
             ),
           ],
         ),
+        actions: [
+          Container(
+            // height: AppBar().preferredSize.height,
+            // width: AppBar().preferredSize.height * 1,
+            child: Center(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, RouteNames.cartScreen);
+                },
+                child: Container(
+                  height: AppBar().preferredSize.height * 0.7,
+                  width: AppBar().preferredSize.height * 0.7,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(AppBar().preferredSize.height * 0.7)),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      PngIcon(
+                        image: 'assets/images/Path_6.png',
+                      ),
+                      cartItems == 0 ? SizedBox() :
+                      Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.red
+                          ),
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                              cartItems.toString()
+                          )
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         height: Get.height,
@@ -114,6 +123,15 @@ class _LooksScreenState extends State<LooksScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Container(
+                  color: HexColor("#EB7AC1"),
+                  height: 25,
+                  width: size.width,
+                  child: Center(
+                      child: Text(
+                        Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €XXX' : 'Add € XXX to your cart to get free shipping',
+                        style: TextStyle(fontSize: 12),
+                      ))),
               GetBuilder<LooksController>(builder: (controller) {
                 if (controller.isLookLoading) {
                   return Container(
@@ -132,8 +150,8 @@ class _LooksScreenState extends State<LooksScreen> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 0.57,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10),
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 5),
                   itemCount: controller.lookModel!.items!.length,
                   itemBuilder: (ctx, i) {
                     return Card(
@@ -156,21 +174,27 @@ class _LooksScreenState extends State<LooksScreen> {
                                             .toString()),
                                         fit: BoxFit.cover)),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  //crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: WishListNew(
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          WishListNew(
                                             sku: controller
                                                 .lookModel!.items![i].sku.toString(),
                                             itemId: int.parse(controller
                                                 .lookModel!.items![i].entityId.toString()),
                                           ),
-                                        ),
-                                      ],
+                                          GestureDetector(onTap: (){
+                                            Share.share(controller
+                                                .lookModel!.items![i].productUrl.toString(),
+                                                subject: controller
+                                                    .lookModel!.items![i].name.toString());
+                                          },child: Icon(Icons.share, color: Colors.grey)),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -178,16 +202,16 @@ class _LooksScreenState extends State<LooksScreen> {
                             ),
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(5.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.center,
                                       children: [
                                         RatingBar.builder(
-                                          itemSize: 10,
-                                          initialRating:  controller.lookModel!.items![i].rating!,
+                                          itemSize: 15,
+                                          initialRating:  double.parse(controller.lookModel!.items![i].avgrating!),
                                           minRating: 1,
                                           direction: Axis.horizontal,
                                           allowHalfRating: true,
@@ -200,33 +224,29 @@ class _LooksScreenState extends State<LooksScreen> {
                                           ),
                                           onRatingUpdate: (rating) {
                                             setState(() {
-                                              controller.lookModel!.items![i].rating =rating;
+                                              controller.lookModel!.items![i].avgrating =rating.toString();
                                             });
                                             print(rating);
                                           },
                                         ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              controller.lookModel!.items![i].rating.toString(),
-                                              style: TextStyle(
-                                                  color: Colors.black, fontSize: 10),
-                                            ),
-                                            SizedBox( width: 15),
-                                            Text(
-                                              '(${controller.lookModel!.items![i].entityId.toString()})',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 10,
-                                              ),
-                                            ),
-                                          ],
+                                        SizedBox( width: 10),
+                                        Text(
+                                          controller.lookModel!.items![i].avgrating.toString(),
+                                          style: TextStyle(
+                                              color: Colors.black, fontSize: 10),
                                         ),
-                                       Container(width: 50,)
+                                        SizedBox( width: 10),
+                                        Text(
+                                          '(${controller.lookModel!.items![i].entityId.toString()})',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 10,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 5,
                                     ),
                                     Row(
                                       children: [
@@ -235,9 +255,9 @@ class _LooksScreenState extends State<LooksScreen> {
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 10),
+                                              fontSize: 12),
                                           textAlign: TextAlign.center,
-                                          maxLines: 3,
+                                          maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
@@ -250,7 +270,7 @@ class _LooksScreenState extends State<LooksScreen> {
                                               "${controller.lookModel!.items![i].description}",
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 10),
+                                                  fontSize: 12),
                                               textAlign: TextAlign.start,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -260,23 +280,23 @@ class _LooksScreenState extends State<LooksScreen> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 7,
                                     ),
                                     Row(
                                       // mainAxisAlignment: MainAxisAlignment.spaceAround,
                                       children: [
                                         Text(
-                                          "£ ${controller.lookModel!.items![i].price.toString()}",
+                                          "€ ${controller.lookModel!.items![i].price!.toStringAsFixed(2)}",
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 10),
+                                              fontSize: 12),
                                         ),
                                         // Text("price!",style: TextStyle(decoration: TextDecoration.lineThrough,color: Colors.red,fontSize: 10,),),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 8,
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -297,48 +317,49 @@ class _LooksScreenState extends State<LooksScreen> {
                                             ),
                                           ),
                                         ),
-                                        InkWell(
-                                          onTap: () async {
-
-                                            await Provider.of<CartProvider>(context, listen: false).addToCart(controller.lookModel!.items![i].sku!, [], 1);
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  padding: EdgeInsets.all(0),
-                                                  backgroundColor: Colors.transparent,
-                                                  duration: Duration(seconds: 1),
-                                                  content: Container(
-                                                    child: CustomSnackBar(
-                                                      sku: controller.lookModel!.items![i].sku!,
-                                                      image: controller.lookModel!.items![i].image.toString(),
-                                                      name: controller.lookModel!.items![i].name!,
+                                        Visibility(visible: !Provider.of<AccountProvider>(context, listen: false).isLoggedIn? false : true,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              await Provider.of<CartProvider>(context, listen: false).addToCart(context, controller.lookModel!.items![i].sku!, [], 1);
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    padding: EdgeInsets.all(0),
+                                                    backgroundColor: Colors.transparent,
+                                                    duration: Duration(seconds: 1),
+                                                    content: Container(
+                                                      child: CustomSnackBar(
+                                                        sku: controller.lookModel!.items![i].sku!,
+                                                        image: controller.lookModel!.items![i].image.toString(),
+                                                        name: controller.lookModel!.items![i].name!,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ) );
-                                            // Get.showSnackbar(GetBar(
-                                            //   message:
-                                            //       'This Section is in under-development',
-                                            //   duration: Duration(seconds: 1),
-                                            // ));
-                                           // Navigator.pushNamed(context, RouteNames.cartScreen);
-                                          },
-                                          child: CircleAvatar(
-                                            radius: 27,
-                                            backgroundColor: Colors.black,
-                                            child: Center(
-                                              child: Image.asset(
-                                                'assets/images/Path_6.png',
-                                                color: Colors.white,
+                                                  ) );
+                                              // Get.showSnackbar(GetBar(
+                                              //   message:
+                                              //       'This Section is in under-development',
+                                              //   duration: Duration(seconds: 1),
+                                              // ));
+                                             // Navigator.pushNamed(context, RouteNames.cartScreen);
+                                            },
+                                            child: CircleAvatar(
+                                              radius: 27,
+                                              backgroundColor: Colors.black,
+                                              child: Center(
+                                                child: Image.asset(
+                                                  'assets/images/Path_6.png',
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
                                       ],
-                                    )
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                             SizedBox(height: 15)
+                            // SizedBox(height: 15)
                           ],
                         ),
                       ),

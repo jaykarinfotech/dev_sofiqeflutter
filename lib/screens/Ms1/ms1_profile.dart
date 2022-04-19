@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sofiqe/controller/controllers.dart';
@@ -13,6 +14,7 @@ import 'package:sofiqe/widgets/makeover/make_over_login_custom_widget.dart';
 import 'package:sofiqe/widgets/my_sofiqe/profile_information.dart';
 import '../my_sofiqe.dart';
 import '../premium_subscription_screen.dart';
+import '../shopping_bag_screen.dart';
 import '../try_it_on_screen.dart';
 
 class Ms1Profile extends StatefulWidget {
@@ -70,11 +72,14 @@ class _Ms1ProfileState extends State<Ms1Profile>
         return MySofiqe();
       } else if (profileController.screen.value == 4) {
         return MyShoppingHistory();
+        //return ShoppingBagScreen();
       } else
-        return Scaffold(
-          backgroundColor: Colors.white,
-          body: SingleChildScrollView(
-            child: mySofiqe(context),
+        return SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
+              child: mySofiqe(context),
+            ),
           ),
         );
     });
@@ -90,7 +95,7 @@ class _Ms1ProfileState extends State<Ms1Profile>
         ProfileInformation(),
         displayTile(
             leading: "lipstick.png",
-            title: "My Shopping",
+            title: "My Shopping History",
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 15,
@@ -179,16 +184,20 @@ class _Ms1ProfileState extends State<Ms1Profile>
         Container(
           height: (profileController.recentItem == null ||
                   profileController.recentItem!.data!.items!.length == 0)
-              ? MediaQuery.of(context).size.height * 0.17
-              : MediaQuery.of(context).size.height * 0.17,
+              ? MediaQuery.of(context).size.height * 0.23
+              : MediaQuery.of(context).size.height * 0.23,
           child: new TabBarView(
             controller: _controller,
             children: <Widget>[
               GetBuilder<MsProfileController>(builder: (contrl) {
                 return (contrl.isRecentLoading)
-                    ? SizedBox()
+                    ? Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ))
                     : (contrl.recentItem == null ||
-                            contrl.recentItem!.data!.items!.length == 0 || contrl.recentItem!.data!.items!.first.id == '')
+                            contrl.recentItem!.data!.items!.length == 0 ||
+                            contrl.recentItem!.data!.items!.first.id == '')
                         ? Container(
                             alignment: Alignment.center,
                             child: Center(
@@ -247,28 +256,32 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                         },
                                         child: Column(
                                           children: [
-                                            Container(
-                                              margin: EdgeInsets.only(left: 10),
-                                              width: 96,
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Container(
-                                                height: 96,
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
                                                 width: 96,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color:
-                                                            Colors.black)),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(
-                                                          10.0),
-                                                  child: Image.network(
-                                                    APIEndPoints
-                                                            .mediaBaseUrl +
-                                                        "${contrl.recentItem!.data!.items![index].image}",
-                                                    // recenScan[0].image!,
-                                                    height: 52,
-                                                    width: 33,
-                                                    fit: BoxFit.contain,
+                                                child: Container(
+                                                  height: 96,
+                                                  width: 96,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors.black)),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
+                                                    child: Image.network(
+                                                      APIEndPoints
+                                                              .mediaBaseUrl +
+                                                          "${contrl.recentItem!.data!.items![index].image}",
+                                                      // recenScan[0].image!,
+                                                      height: 52,
+                                                      width: 33,
+                                                      fit: BoxFit.contain,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -281,8 +294,7 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                                   .items![index].brand!,
                                               style: TextStyle(
                                                   fontSize: 8,
-                                                  color:
-                                                      Color(0xff938282)),
+                                                  color: Color(0xff938282)),
                                             ),
                                             SizedBox(
                                               height: 5,
@@ -293,22 +305,37 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                                 contrl.recentItem!.data!
                                                     .items![index].name!,
                                                 maxLines: 2,
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                     fontSize: 10,
                                                     color: Colors.black),
-                                                textAlign:
-                                                    TextAlign.center,
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
-                                            SizedBox(
-                                              height: 20,
+                                            SizedBox(height: 5,),
+                                            Container(
+                                              child: RatingBar.builder(
+                                                initialRating: 3,
+                                                minRating: 1,
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: true,
+                                                itemCount: 5,
+                                                itemSize: 12.0,
+                                                itemPadding: EdgeInsets.symmetric(
+                                                    horizontal: 4.0),
+                                                itemBuilder: (context, _) => Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
+                                                ),
+                                                onRatingUpdate: (rating) {
+                                                  print(rating);
+                                                },
+                                              ),
                                             ),
+                                            SizedBox(height: 5,),
                                             Text(
                                               'REVIEW',
-                                              style:
-                                                  TextStyle(fontSize: 9),
+                                              style: TextStyle(fontSize: 9),
                                             )
                                           ],
                                         ),
@@ -334,7 +361,10 @@ class _Ms1ProfileState extends State<Ms1Profile>
               }),
               GetBuilder<MsProfileController>(builder: (contrl) {
                 return (contrl.isRecentLoading)
-                    ? SizedBox()
+                    ? Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ))
                     : (contrl.recentItem == null ||
                             contrl.recentItem!.data!.items!.length == 0)
                         ? Container(
@@ -385,10 +415,10 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                       child: ListView.builder(
                                     physics: BouncingScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: contrl
-                                        .recentItem!.data!.items!.length,
+                                    itemCount:
+                                        contrl.recentItem!.data!.items!.length,
                                     itemBuilder: (context, index) {
-                                      return  Align(
+                                      return Align(
                                         alignment: Alignment.center,
                                         child: GestureDetector(
                                           onTap: () {},
@@ -413,17 +443,26 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                                             color: Colors.black,
                                                             width: 1.5)),
                                                   ),
-                                                  SizedBox(height: 5,),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
                                                   Center(
-                                                    child: Text('Hex'+contrl
-                                                        .recentItem!
-                                                        .data!
-                                                        .items![index]
-                                                        .scanColour
-                                                        .toString(),  style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                                                      color: Colors.black,
-                                                      fontSize: 12,
-                                                    ),),
+                                                    child: Text(
+                                                      'Hex' +
+                                                          contrl
+                                                              .recentItem!
+                                                              .data!
+                                                              .items![index]
+                                                              .scanColour
+                                                              .toString(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1!
+                                                          .copyWith(
+                                                            color: Colors.black,
+                                                            fontSize: 12,
+                                                          ),
+                                                    ),
                                                   )
                                                 ],
                                               ),
@@ -525,7 +564,7 @@ class _Ms1ProfileState extends State<Ms1Profile>
             ),
             handler: () {
               Get.to(() => PrivacyPolicyScreen(
-                    isTerm: false,
+                    isTerm: false, isReturnPolicy: false,
                   ));
             }),
         Divider(),
@@ -538,10 +577,22 @@ class _Ms1ProfileState extends State<Ms1Profile>
             ),
             handler: () {
               Get.to(() => PrivacyPolicyScreen(
-                    isTerm: true,
+                    isTerm: true, isReturnPolicy: false,
                   ));
             }),
         Divider(),
+        displayTile(
+            leading: "",
+            title: "Return Policy",
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              size: 15,
+            ),
+            handler: () {
+              Get.to(() => PrivacyPolicyScreen(
+                isTerm: true, isReturnPolicy: true,
+              ));
+            }),
       ],
     ));
   }

@@ -243,7 +243,7 @@ class AddToBagButton extends StatelessWidget {
           }else{
             CartProvider cartP =
             Provider.of<CartProvider>(context, listen: false);
-            await cartP.addHomeProductsToCart(product);
+            await cartP.addHomeProductsToCart(context, product);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 padding: EdgeInsets.all(0),

@@ -1,165 +1,183 @@
+// To parse this JSON data, do
+//
+//     final reviewModel = reviewModelFromJson(jsonString);
+
+import 'dart:convert';
+
+ReviewModel reviewModelFromJson(String str) => ReviewModel.fromJson(json.decode(str));
+
+String reviewModelToJson(ReviewModel data) => json.encode(data.toJson());
+
 class ReviewModel {
-  List<Items>? items;
+  ReviewModel({
+    this.items,
+    this.searchCriteria,
+    this.totalCount,
+  });
+
+  List<Item>? items;
   SearchCriteria? searchCriteria;
   int? totalCount;
 
-  ReviewModel({this.items, this.searchCriteria, this.totalCount});
+  factory ReviewModel.fromJson(Map<String, dynamic> json) => ReviewModel(
+    items: List<Item>.from(json["items"].map((x) => Item.fromJson(x))),
+    searchCriteria: SearchCriteria.fromJson(json["search_criteria"]),
+    totalCount: json["total_count"],
+  );
 
-  ReviewModel.fromJson(Map<String, dynamic> json) {
-    if (json['items'] != null) {
-      items = <Items>[];
-      json['items'].forEach((v) {
-        items!.add(new Items.fromJson(v));
-      });
-    }
-    searchCriteria = json['search_criteria'] != null
-        ? new SearchCriteria.fromJson(json['search_criteria'])
-        : null;
-    totalCount = json['total_count'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
-    }
-    if (this.searchCriteria != null) {
-      data['search_criteria'] = this.searchCriteria!.toJson();
-    }
-    data['total_count'] = this.totalCount;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "items": List<dynamic>.from(items!.map((x) => x.toJson())),
+    "search_criteria": searchCriteria!.toJson(),
+    "total_count": totalCount,
+  };
 }
 
-class Items {
+class Item {
+  Item({
+    this.id,
+    this.title,
+    this.detail,
+    this.nickname,
+    this.customerId,
+    this.ratings,
+    this.reviewEntity,
+    this.reviewType,
+    this.reviewStatus,
+    this.createdAt,
+    this.entityPkValue,
+    this.storeId,
+    this.stores,
+    this.image,
+    this.sku,
+    this.productUrl,
+    this.rewardPoints,
+  });
+
   int? id;
   String? title;
-  String? sku;
   String? detail;
   String? nickname;
   int? customerId;
-  List<Ratings>? ratings;
+  List<Rating>? ratings;
   String? reviewEntity;
   int? reviewType;
   int? reviewStatus;
-  String? createdAt;
+  DateTime? createdAt;
   int? entityPkValue;
   int? storeId;
   List<int>? stores;
   String? image;
+  String? sku;
+  String? productUrl;
+  String? rewardPoints;
 
-  Items(
-      {this.id,
-      this.title,
-      this.sku,
-      this.detail,
-      this.nickname,
-      this.customerId,
-      this.ratings,
-      this.reviewEntity,
-      this.reviewType,
-      this.reviewStatus,
-      this.createdAt,
-      this.entityPkValue,
-      this.storeId,
-      this.stores,
-      this.image,
-      });
+  factory Item.fromJson(Map<String, dynamic> json) => Item(
+    id: json["id"],
+    title: json["title"],
+    detail: json["detail"],
+    nickname: json["nickname"],
+    customerId: json["customer_id"],
+    ratings: List<Rating>.from(json["ratings"].map((x) => Rating.fromJson(x))),
+    reviewEntity: json["review_entity"],
+    reviewType: json["review_type"],
+    reviewStatus: json["review_status"],
+    createdAt: DateTime.parse(json["created_at"]),
+    entityPkValue: json["entity_pk_value"],
+    storeId: json["store_id"],
+    stores: List<int>.from(json["stores"].map((x) => x)),
+    image: json["image"],
+    sku: json["sku"],
+    productUrl: json["product_url"],
+    rewardPoints: json["reward_points"],
+  );
 
-  Items.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    title = json['title'];
-    sku = json['sku'];
-    detail = json['detail'];
-    nickname = json['nickname'];
-    customerId = json['customer_id'];
-    if (json['ratings'] != null) {
-      ratings = <Ratings>[];
-      json['ratings'].forEach((v) {
-        ratings!.add(new Ratings.fromJson(v));
-      });
-    }
-    reviewEntity = json['review_entity'];
-    reviewType = json['review_type'];
-    reviewStatus = json['review_status'];
-    createdAt = json['created_at'];
-    entityPkValue = json['entity_pk_value'];
-    storeId = json['store_id'];
-    stores = json['stores'].cast<int>();
-    image = json['image'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['sku'] = this.sku;
-    data['detail'] = this.detail;
-    data['nickname'] = this.nickname;
-    data['customer_id'] = this.customerId;
-    if (this.ratings != null) {
-      data['ratings'] = this.ratings!.map((v) => v.toJson()).toList();
-    }
-    data['review_entity'] = this.reviewEntity;
-    data['review_type'] = this.reviewType;
-    data['review_status'] = this.reviewStatus;
-    data['created_at'] = this.createdAt;
-    data['entity_pk_value'] = this.entityPkValue;
-    data['store_id'] = this.storeId;
-    data['stores'] = this.stores;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title": title,
+    "detail": detail,
+    "nickname": nickname,
+    "customer_id": customerId,
+    "ratings": List<dynamic>.from(ratings!.map((x) => x.toJson())),
+    "review_entity": reviewEntity,
+    "review_type": reviewType,
+    "review_status": reviewStatus,
+    "created_at": createdAt!.toIso8601String(),
+    "entity_pk_value": entityPkValue,
+    "store_id": storeId,
+    "stores": List<dynamic>.from(stores!.map((x) => x)),
+    "image": image,
+    "sku": sku,
+    "product_url": productUrl,
+    "reward_points": rewardPoints,
+  };
 }
 
-class Ratings {
+class Rating {
+  Rating({
+    this.voteId,
+    this.ratingId,
+    this.ratingName,
+    this.percent,
+    this.value,
+  });
+
   int? voteId;
   int? ratingId;
-  String? ratingName;
+  RatingName? ratingName;
   int? percent;
   int? value;
 
-  Ratings(
-      {this.voteId, this.ratingId, this.ratingName, this.percent, this.value});
+  factory Rating.fromJson(Map<String, dynamic> json) => Rating(
+    voteId: json["vote_id"],
+    ratingId: json["rating_id"],
+    ratingName: ratingNameValues.map![json["rating_name"]],
+    percent: json["percent"],
+    value: json["value"],
+  );
 
-  Ratings.fromJson(Map<String, dynamic> json) {
-    voteId = json['vote_id'];
-    ratingId = json['rating_id'];
-    ratingName = json['rating_name'];
-    percent = json['percent'];
-    value = json['value'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vote_id'] = this.voteId;
-    data['rating_id'] = this.ratingId;
-    data['rating_name'] = this.ratingName;
-    data['percent'] = this.percent;
-    data['value'] = this.value;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "vote_id": voteId,
+    "rating_id": ratingId,
+    "rating_name": ratingNameValues.reverse[ratingName],
+    "percent": percent,
+    "value": value,
+  };
 }
 
+enum RatingName { VALUE, QUALITY, PRICE }
+
+final ratingNameValues = EnumValues({
+  "Price": RatingName.PRICE,
+  "Quality": RatingName.QUALITY,
+  "Value": RatingName.VALUE
+});
+
 class SearchCriteria {
- var filterGroups;
+  SearchCriteria({
+    this.filterGroups,
+  });
 
-  SearchCriteria({this.filterGroups});
+  List<dynamic>? filterGroups;
 
-  SearchCriteria.fromJson(Map<String, dynamic> json) {
-    if (json['filter_groups'] != null) {
-    
-      filterGroups = json['filter_groups'];
-      // json['filter_groups'].forEach((v) {
-      //   filterGroups.add(new Null.fromJson(v));
-      // });
+  factory SearchCriteria.fromJson(Map<String, dynamic> json) => SearchCriteria(
+    filterGroups: List<dynamic>.from(json["filter_groups"].map((x) => x)),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "filter_groups": List<dynamic>.from(filterGroups!.map((x) => x)),
+  };
+}
+
+class EnumValues<T> {
+  Map<String, T>? map;
+  Map<T, String>? reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    if (reverseMap == null) {
+      reverseMap = map!.map((k, v) => new MapEntry(v, k));
     }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.filterGroups != null) {
-      data['filter_groups'] = this.filterGroups.map((v) => v.toJson()).toList();
-    }
-    return data;
+    return reverseMap!;
   }
 }

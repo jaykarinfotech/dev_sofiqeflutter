@@ -48,14 +48,14 @@ class Data {
       this.paymentMethod});
 
   Data.fromJson(Map<String, dynamic> json) {
-    orderId = json['order_id'];
-    orderIncrementId = json['order_increment_id'];
-    date = json['date'];
-    status = json['status'];
-    state = json['state'];
-    count = json['count'];
-    totals = json['totals'];
-    totalQty = json['total_qty'];
+    orderId = json['order_id'] == null ? "" : json['order_id'];
+    orderIncrementId = json['order_increment_id'] == null ? "" : json['order_increment_id'];
+    date = json['date'] == null ? "" : json['date'];
+    status = json['status'] == null ? "" : json['status'];
+    state = json['state'] == null ? "" : json['state'];
+    count = json['count'] == null ? "" : json['count'];
+    totals = json['totals'] == null ? "" : json['totals'];
+    totalQty = json['total_qty'] == null ? "" : json['total_qty'];
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {

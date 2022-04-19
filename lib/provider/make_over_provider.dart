@@ -51,8 +51,12 @@ class MakeOverProvider extends GetxController {
   ];
 
   MakeOverProvider() {
+   _initData();
+  }
+
+  _initData() async{
     questions.value = questionsController.makeover;
-    getIngredeints();
+    await getIngredeints();
     images = [].obs;
     currentQuestion = 0.obs;
     currentPrompt = 0.obs;

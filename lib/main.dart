@@ -16,14 +16,15 @@ import 'controller/msProfileController.dart';
 void main() async {
   HttpOverrides.global = new MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(WishListProvider());
-  Get.put(MsProfileController());
-  Get.put(QuestionsController());
-  Get.put(MakeOverProvider());
+  // Get.put(WishListProvider());
+  // Get.put(MsProfileController());
+  // Get.put(QuestionsController());
+  // Get.put(MakeOverProvider());
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp();
   runApp(Sofiqe());
+
 }
 
 class MyHttpOverrides extends HttpOverrides {

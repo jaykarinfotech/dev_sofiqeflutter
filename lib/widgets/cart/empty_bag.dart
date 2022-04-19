@@ -1,23 +1,29 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:sofiqe/controller/controllers.dart';
 import 'package:sofiqe/provider/page_provider.dart';
 import 'package:sofiqe/widgets/capsule_button.dart';
+
+import '../../screens/my_sofiqe.dart';
 
 class EmptyBagPage extends StatelessWidget {
   final String? emptyBagButtonText;
   EmptyBagPage({Key? key, this.emptyBagButtonText}) : super(key: key);
   PageProvider pp = Get.find();
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
       width: MediaQuery.of(context).size.width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Transform.translate(
             offset: Offset(0, MediaQuery.of(context).size.height * 0.02),
@@ -56,6 +62,7 @@ class EmptyBagPage extends StatelessWidget {
                   ),
             ),
           ),
+          SizedBox(height: 55,)
         ],
       ),
     );

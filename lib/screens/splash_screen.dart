@@ -10,7 +10,15 @@ import 'package:sofiqe/utils/constants/app_colors.dart';
 import 'package:sofiqe/utils/constants/route_names.dart';
 import 'package:sofiqe/utils/states/launch_status.dart';
 import 'package:sofiqe/utils/db/startup_routine.dart';
-
+import '../controller/msProfileController.dart';
+import '../controller/questionController.dart';
+import 'package:sofiqe/provider/catalog_provider.dart';
+import 'package:sofiqe/provider/home_provider.dart';
+import 'package:sofiqe/provider/make_over_provider.dart';
+import 'package:sofiqe/provider/page_provider.dart';
+import 'package:sofiqe/provider/phone_verification_controller.dart';
+import 'package:sofiqe/provider/try_it_on_provider.dart';
+import 'package:sofiqe/provider/wishlist_provider.dart';
 import '../provider/home_provider.dart';
 
 
@@ -20,9 +28,27 @@ class SplashScreen extends StatefulWidget {
 
     ///todo: uncomment
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    _setUpDB();
+    //_setUpDB();
   }
 
+  // Future<void> _setUpDB() async {
+  //   if (!_isSet) {
+  //     await sfDBStartupRoutine();
+  //     // mop.questions= await  ques.getAnaliticalQuestions();
+  //     // makeOverProvider.ingredients.value= await sfAPIgetIngredients();
+  //     // await makeOverProvider.getQuestionnaireList();
+  //     // mop.ingredients = await sfAPIgetIngredients();
+  //   }
+  // }
+  //
+  // static bool _isSet = false;
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+
+  static bool _isSet = false;
   Future<void> _setUpDB() async {
     if (!_isSet) {
       await sfDBStartupRoutine();
@@ -33,19 +59,28 @@ class SplashScreen extends StatefulWidget {
     }
   }
 
-  static bool _isSet = false;
   @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
+  void initState() {
+    // TODO: implement initState
+    _setUpDB();
+    super.initState();
+    final WishListProvider wp = Get.put(WishListProvider());
+    final c = Get.put(PhoneVerificationController());
+    final HomeProvider hp = Get.put(HomeProvider());
+    final TryItOnProvider tiop = Get.put(TryItOnProvider());
+    final PageProvider pp = Get.put(PageProvider());
+    final CatalogProvider cp = Get.put(CatalogProvider());
+    final MsProfileController pc = Get.put(MsProfileController());
+    final QuestionsController qc = Get.put(QuestionsController());
+    final MakeOverProvider mop = Get.put(MakeOverProvider());
+  }
   @override
   Widget build(BuildContext context) {
-    if (!SplashScreen._isSet) {
+    if (!_isSet) {
       _setNextRoute(context);
       // final HomeProvider hp = Get.find();
       // hp.callAPis();
-      SplashScreen._isSet = true;
+      _isSet = true;
     }
 
     // return widget
@@ -96,7 +131,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _setNextRoute(BuildContext c) {
      Timer(
-      Duration(seconds: 4),
+      Duration(seconds: 5),
           () async {
         if (await sfDidAppLaunchFirstTime()) {
           Navigator.pushReplacementNamed(c, RouteNames.wizardScreen);
