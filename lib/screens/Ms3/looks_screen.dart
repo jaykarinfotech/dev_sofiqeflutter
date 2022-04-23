@@ -129,7 +129,7 @@ class _LooksScreenState extends State<LooksScreen> {
                   width: size.width,
                   child: Center(
                       child: Text(
-                        Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €XXX' : 'Add € XXX to your cart to get free shipping',
+                        Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €'+Provider.of<AccountProvider>(context, listen: false).freeShippingAmount : 'Add € XXX to your cart to get free shipping',
                         style: TextStyle(fontSize: 12),
                       ))),
               GetBuilder<LooksController>(builder: (controller) {

@@ -1,13 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 
 // 3rd party packages
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sofiqe/model/product_model.dart';
 import 'package:sofiqe/provider/cart_provider.dart';
 import 'package:sofiqe/provider/page_provider.dart';
@@ -29,6 +32,8 @@ import 'package:sofiqe/widgets/product_detail/static_details.dart';
 import 'package:sofiqe/widgets/product_image.dart';
 import 'package:sofiqe/widgets/review.dart';
 import 'package:sofiqe/widgets/wishlist.dart';
+import '../utils/api/product_list_api.dart';
+import '../../provider/account_provider.dart';
 
 class ProductDetail1Screen extends StatefulWidget {
   final String sku;
@@ -43,6 +48,9 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
     return sfAPIGetProductDetailsFromSKU(sku: '${widget.sku}');
   }
 
+  var freeshippingData;
+  List simpleProductOptions = [];
+
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIOverlays([]);
@@ -50,9 +58,11 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
     ///todo: uncomment
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     super.initState();
+    freeshipping().then((value) {
+      freeshippingData = value;
+    });
   }
 
-  List simpleProductOptions = [];
 
   void setOptions(index, optionMap) {
     simpleProductOptions[index] = optionMap;
@@ -193,6 +203,14 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
 
             return Column(
               children: [
+                Container(
+                  height: 17,
+                  color: Color(0xffEB7AC1),
+                  alignment: Alignment.center,
+                  child: Text(
+                    Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €'+Provider.of<AccountProvider>(context, listen: false).freeShippingAmount : 'Add € XXX to your cart to get free shipping',
+                  ),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Container(
@@ -203,30 +221,30 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: size.height * 0.01,
-                                    horizontal: size.width * 0.03),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    WishList(
-                                        sku: responseBody['sku'],
-                                        itemId: responseBody['id']),
-                                    Text(
-                                      'WISHLIST',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline2!
-                                          .copyWith(
-                                            color: Colors.white,
-                                            fontSize: size.height * 0.01,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // Container(
+                              //   padding: EdgeInsets.symmetric(
+                              //       vertical: size.height * 0.01,
+                              //       horizontal: size.width * 0.03),
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.start,
+                              //     crossAxisAlignment: CrossAxisAlignment.start,
+                              //     children: [
+                              //       WishList(
+                              //           sku: responseBody['sku'],
+                              //           itemId: responseBody['id']),
+                              //       Text(
+                              //         'WISHLIST',
+                              //         style: Theme.of(context)
+                              //             .textTheme
+                              //             .headline2!
+                              //             .copyWith(
+                              //               color: Colors.white,
+                              //               fontSize: size.height * 0.01,
+                              //             ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 40.0),
                                 child: Center(
@@ -273,52 +291,279 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        ".",
-                                        style: TextStyle(),
-                                      ),
-                                    ),
+                                    // Padding(
+                                    //   padding: const EdgeInsets.all(8.0),
+                                    //   child: Text(
+                                    //     ".",
+                                    //     style: TextStyle(),
+                                    //   ),
+                                    // ),
                                     Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.6,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          '${responseBody['name'].toString().toUpperCase()}',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: SplashScreenPageColors
-                                                .textColor,
-                                            fontFamily: 'Arial, Regular',
-                                            fontSize: 18.0,
-                                          ),
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 0.15),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '${responseBody['name'].toString().toUpperCase()}',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: SplashScreenPageColors.textColor,
+                                          fontFamily: 'Arial_regular',
+                                          fontSize: 15.0,
                                         ),
                                       ),
                                     ),
-                                    //TODO:
-                                    /// Add review icon
-                                    Review(sku: responseBody['sku']),
+                                    //  //TODO:
+                                    //  Add review icon
+                                    // Review(sku: responseBody['sku']),
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Container(
-                                  child: Text(
-                                    '$description',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Arial, Regular',
-                                      fontSize: 14.0,
+                              Row(
+                                children: [
+                                  Container(
+                                    height: size.height * 0.03,
+                                    width: size.width * 0.67,
+                                    alignment: Alignment.centerRight,
+                                    child: RatingBar.builder(
+                                      initialRating: double.parse(
+                                          responseBody['extension_attributes']
+                                              ['avgrating']),
+                                      minRating: 0,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: size.height * 0.027,
+                                      unratedColor: Colors.white,
+                                      itemPadding:
+                                          EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemBuilder: (context, _) => Icon(
+                                        Icons.star,
+                                        color: Color(0xffF2CA8A),
+                                      ),
+                                      onRatingUpdate: (rating) {
+                                        print(rating);
+                                      },
                                     ),
                                   ),
+                                  Container(
+                                    width: size.width * 0.21,
+                                    // margin: EdgeInsets.only(
+                                    //     left: size.width * 0.06),
+                                    padding: EdgeInsets.fromLTRB(size.width * .14, 14, 0, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        WishList(
+                                            sku: responseBody['sku'],
+                                            itemId: responseBody['id']),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width: size.width * 0.12,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                            height: 10,
+                                            child: Text(
+                                              "",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10),
+                                            )),
+                                        SizedBox(
+                                          child: IconButton(
+                                              onPressed: () {
+                                                var product_url = responseBody[
+                                                        'extension_attributes']
+                                                    ['product_url'];
+                                                Share.share(product_url);
+                                              },
+                                              icon: Icon(
+                                                Icons.share_outlined,
+                                                color: Color(0xffD0C5C5),
+                                                size: size.width * 0.06,
+                                              )),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+                              Container(
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: size.width * 0.05),
+                                      child: Text(
+                                        // '€ ${(responseBody['price'] as num).toStringAsFixed(2)}',
+                                        '${(responseBody['price'] as num).toDouble().toProperCurrencyString()}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline2!
+                                            .copyWith(
+                                              color: SplashScreenPageColors
+                                                  .textColor,
+                                              fontSize: size.height * 0.021,
+                                            ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: size.height * 0.01),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "   Earn ${responseBody['extension_attributes']['reward_points']} ",
+                                            style: TextStyle(
+                                                color: Color(0xff12C171),
+                                                fontSize: 10),
+                                          ),
+                                          Icon(
+                                            Icons.circle,
+                                            color: Colors.yellow, // change here
+                                            size: size.height * 0.011,
+                                          ),
+                                          Text(
+                                            " VIP points",
+                                            style: TextStyle(
+                                                color: Color(0xff12C171),
+                                                fontSize: 10),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            right: size.width * 0.04),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5.0),
+                                              child: Icon(
+                                                Icons.circle,
+                                                color: qty > 0
+                                                    ? AppColors.primaryColor
+                                                    : Colors.red, // change here
+                                                size: 5,
+                                              ),
+                                            ),
+                                            Text(
+                                              qty > 0
+                                                  ? 'IN STOCK'
+                                                  : 'OUT OF STOCK',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2!
+                                                  .copyWith(
+                                                    fontSize: 10,
+                                                    color:
+                                                        SplashScreenPageColors
+                                                            .textColor,
+                                                    fontFamily:
+                                                        'Arial, Regular',
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 0.05,
+                                        top: size.height * 0.03),
+                                    child: Text(
+                                      "or 4 interest-freeinstalment ",
+                                      style: TextStyle(
+                                          fontFamily: 'Segoe UI, Regular',
+                                          color: Colors.white,
+                                          fontSize: size.height * 0.021),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 0.05,
+                                        top: size.width * 0.01),
+                                    alignment: Alignment.bottomLeft,
+                                    child: Text(
+                                      "of € ${((responseBody['price'] as num)/4).toDouble()} with",
+                                      style: TextStyle(
+                                          fontFamily: 'Arial, Regular',
+                                          color: Colors.white,
+                                          fontSize: size.height * 0.019),
+                                    ),
+                                  ),
+
+                                  Expanded(flex: 1,
+                                    child: InkWell(
+                                      onTap: () {},
+                                      child: Container(
+                                        padding: EdgeInsets.only(top: size.height*0.005),
+                                        margin: const EdgeInsets.only(left: 5, right: 5),
+                                        alignment: Alignment.centerLeft,
+                                       // width: size.width * .50,
+                                        // color: Colors.white,
+                                        child: Image(
+                                            image: AssetImage(
+                                          "assets/images/clearpay3.png",
+                                        ),
+                                          width: 90,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(flex: 3,
+                                    child: Container(
+                                      width: size.width * .01,
+                                      alignment: Alignment.centerLeft,
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: Colors.white,
+                                        size: size.height * 0.023,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              // Padding(
+                              //   padding: EdgeInsets.all(20.0),
+                              //   child: Container(
+                              //     child: Text(
+                              //       '$description',
+                              //       textAlign: TextAlign.center,
+                              //       style: TextStyle(
+                              //         color: Colors.white,
+                              //         fontFamily: 'Arial, Regular',
+                              //         fontSize: 14.0,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               Padding(
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.symmetric(vertical: 20),
                                 child: Divider(
                                   height: 0,
                                   color: AppColors.secondaryColor,
@@ -336,77 +581,33 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                     optionMap: items,
                                     options: (optionMap) {
                                       setOptions(localIndex, optionMap);
-                                      items['option_type_id'] = optionMap['optionValue'];
+                                      items['option_type_id'] =
+                                          optionMap['optionValue'];
                                     },
                                   );
                                 },
                               ).toList(),
                               Padding(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 20.0, vertical: 10),
+                                    horizontal: 0.0, vertical: 10),
                                 child: Container(
                                   child: Column(
                                     children: [
-                                      Container(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(0),
-                                              child: Text(
-                                                // '€ ${(responseBody['price'] as num).toStringAsFixed(2)}',
-                                                '${(responseBody['price'] as num).toDouble().toProperCurrencyString()}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline2!
-                                                    .copyWith(
-                                                      color:
-                                                          SplashScreenPageColors
-                                                              .textColor,
-                                                      fontSize: 16.0,
-                                                    ),
-                                              ),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                        child: Container(
+                                          child: Text(
+                                            '$description',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Arial, Regular',
+                                              fontSize: 14.0,
                                             ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(0.0),
-                                              child: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 8.0),
-                                                    child: Icon(
-                                                      Icons.circle,
-                                                      color: qty > 0
-                                                          ? AppColors
-                                                              .primaryColor
-                                                          : Colors
-                                                              .red, // change here
-                                                      size: 5,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    qty > 0
-                                                        ? 'IN STOCK'
-                                                        : 'OUT OF STOCK',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline2!
-                                                        .copyWith(
-                                                          fontSize: 10,
-                                                          color:
-                                                              SplashScreenPageColors
-                                                                  .textColor,
-                                                        ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ),
+
                                     ],
                                   ),
                                 ),
@@ -420,8 +621,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                               ),
 
                               AdditionalOptions(
-                                  details: responseBody[
-                                      'custom_attributes']), // Add addional options here
+                                  details: responseBody['custom_attributes']),
+                              // Add addional options here
 
                               FutureBuilder(
                                 future: sfAPIGetProductStatic(),
@@ -504,7 +705,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
 
                             if(options.isNotEmpty){
                               options.forEach((po) {
-                                if(po['is_required'] == true && po['option_type_id'] == null){
+                                if (po['is_required'] == true &&
+                                    po['option_type_id'] == null) {
                                   Get.showSnackbar(
                                     GetBar(
                                       message: 'Select ${po['title']} first!!',

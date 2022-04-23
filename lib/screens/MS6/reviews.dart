@@ -56,7 +56,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
         designSize: Size(360, 690),
         minTextAdapt: true,
         splitScreenMode: true,
-        builder: () => SafeArea(
+        builder: (covariant) => SafeArea(
                 child: Scaffold(
               body: SingleChildScrollView(
                 child: Column(

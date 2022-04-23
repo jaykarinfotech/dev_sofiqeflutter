@@ -13,6 +13,9 @@ class Product {
   late String color = '#ffffff';
   late String brand = '';
   late String  avgRating = "0.0";
+  late String  product_url = "";
+  late String  reward_points = "";
+  late String  review_count = "";
   bool hasOption = false;
 
   bool allergyInducing = false;
@@ -25,6 +28,9 @@ class Product {
     required this.description,
     required this.faceSubArea,
     required this.avgRating,
+    this.product_url = '',
+    this.reward_points = '',
+    this.review_count = '',
     this.color = '#ffffff',
     this.faceSubAreaName = '',
     this.options,
@@ -61,15 +67,30 @@ class Product {
     }
 
     this.id = m['id'];
-    this.sku = m['sku'];
-    this.name = m['name'];
+    this.sku = m['sku'] != null ? m['sku'] : "";
+    this.name = m['name'] != null ? m['name'] : "";
     this.price = m['price'] != null ? m['price'].toDouble() : 0.0;
     this.options = m['options'];
-    this.image = image;
+    this.image = image != null ? image : '';
     this.description = description;
     this.faceSubArea = faceSubArea;
     if(m['extension_attributes'] != null && m['extension_attributes']['avgrating'] != null){
       this.avgRating = m['extension_attributes']['avgrating'];
+    }
+
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['product_url'] != null) {
+      this.product_url = m['extension_attributes']['product_url'];
+    }
+
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['reward_points'] != null) {
+      this.reward_points = m['extension_attributes']['reward_points'];
+    }
+
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['review_count'] != null) {
+      this.review_count = m['extension_attributes']['review_count'];
     }
 
     this.getSubAreaName();
@@ -101,6 +122,22 @@ class Product {
     if(m['extension_attributes'] != null && m['extension_attributes']['avgrating'] != null){
       this.avgRating = m['extension_attributes']['avgrating'];
     }
+
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['product_url'] != null) {
+      this.product_url = m['extension_attributes']['product_url'];
+    }
+
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['reward_points'] != null) {
+      this.reward_points = m['extension_attributes']['reward_points'];
+    }
+
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['review_count'] != null) {
+      this.review_count = m['extension_attributes']['review_count'];
+    }
+
     customAttributes.forEach(
       (ca) {
         if (ca.containsKey('description')) {

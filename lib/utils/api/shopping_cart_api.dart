@@ -94,24 +94,33 @@ Future<void> sfAPIAddItemToCart(String token, int qouteId, String sku,
   }
   http.Response response = await http.post(
     url,
-    headers: userType == 'Guest' ? {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ${APITokens.bearerToken}',
-    } : {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
-    },
+    headers: userType == 'Guest'
+        ? {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${APITokens.bearerToken}',
+          }
+        : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
+          },
     body: json.encode(
       type == 0
-          ? {
-              'cartItem': {
-                'sku': '$sku',
-                'qty': quantity == 0 ? 1 : quantity,
-                'quote_id': '$token',
-              },
-            }
+          ? userType == 'Guest'
+              ? {
+                  'cartItem': {
+                    'sku': '$sku',
+                    'qty': quantity == 0 ? 1 : quantity
+                  },
+                }
+              : {
+                  'cartItem': {
+                    'sku': '$sku',
+                    'qty': quantity == 0 ? 1 : quantity,
+                    'quote_id': '$token',
+                  },
+                }
           : {
               'cartItem': {
                 'sku': '$sku',

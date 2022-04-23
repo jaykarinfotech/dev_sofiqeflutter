@@ -34,7 +34,7 @@ class Sofiqe extends StatelessWidget {
         designSize: Size(360, 690),
         minTextAdapt: true,
         splitScreenMode: true,
-        builder: () => MultiProvider(
+        builder: (covariant) => MultiProvider(
               providers: [
                 ChangeNotifierProvider<AccountProvider>(
                   lazy: false,

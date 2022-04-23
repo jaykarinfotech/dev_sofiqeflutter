@@ -7,6 +7,8 @@ import 'package:sofiqe/widgets/cart/cart_item_list.dart';
 import 'package:sofiqe/widgets/cart/empty_bag.dart';
 import 'package:sofiqe/widgets/cart/shopping_bag_bottom_tab.dart';
 
+import '../provider/account_provider.dart';
+
 class ShoppingBagScreen extends StatefulWidget {
   const ShoppingBagScreen({Key? key}) : super(key: key);
 
@@ -73,7 +75,7 @@ class _ShoppingBagScreenState extends State<ShoppingBagScreen> {
                         width: size.width,
                         child: Center(
                             child: Text(
-                              Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €XXX' : 'Add € XXX to your cart to get free shipping',
+                              Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €'+Provider.of<AccountProvider>(context, listen: false).freeShippingAmount : 'Add € XXX to your cart to get free shipping',
                           style: TextStyle(fontSize: 12),
                         ))),
                     Expanded(

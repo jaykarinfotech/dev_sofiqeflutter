@@ -1,7 +1,13 @@
+import 'dart:developer';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sofiqe/model/product_model.dart';
+import 'package:sofiqe/model/response.model.dart';
 import 'package:sofiqe/provider/cart_provider.dart';
 import 'package:sofiqe/provider/page_provider.dart';
 import 'package:sofiqe/provider/try_it_on_provider.dart';
@@ -12,6 +18,7 @@ import 'package:sofiqe/widgets/product_detail/order_notification.dart';
 import 'package:sofiqe/widgets/product_image.dart';
 import 'package:sofiqe/widgets/wishlist.dart';
 import 'package:sofiqe/widgets/round_button.dart';
+import '../../provider/account_provider.dart';
 
 class ProductItemCard extends StatelessWidget {
   final Product product;
@@ -46,12 +53,24 @@ class ProductItemCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
+              padding: EdgeInsets.only(left: size.width * .02),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   WishList(
                     sku: product.sku!,
                     itemId: product.id!,
                   ),
+                  IconButton(
+                      onPressed: () {
+                        var producturl=product.product_url;
+                        Share.share(producturl);
+                      },
+                      icon: Icon(
+                        Icons.share_outlined,
+                        color: Color(0xffD0C5C5),
+                        size: size.height * 0.027,
+                      ))
                 ],
               ),
             ),
@@ -60,14 +79,14 @@ class ProductItemCard extends StatelessWidget {
               child: ProductImage(
                 imageShortPath: product.image,
                 width: size.width * 0.2,
-                height: size.height * 0.15,
+                height: size.height * 0.1,
               ),
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
               height: size.height * 0.046,
               child: Text(
-                '${product.name}',
+                '${product.name}', 
                 overflow: TextOverflow.fade,
                 style: Theme.of(context).textTheme.headline2!.copyWith(
                       color: Colors.black,
@@ -75,6 +94,42 @@ class ProductItemCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
               ),
+            ),
+            Row(
+              children: [
+                Container(
+                  height: size.height * 0.02,
+                  width: size.width * 0.23,
+                  alignment: Alignment.bottomCenter,
+                  child: RatingBar.builder(
+                    initialRating: double.parse(product.avgRating),
+
+                    minRating: 0,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemSize: 15,
+                    unratedColor: Color(0xffF4F2F0),
+                    itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: Color(0xffF2CA8A),
+                    ),
+                    onRatingUpdate: (rating) {
+                      print("${rating}");
+                    },
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5,top: 5),
+                  width: size.width * .15,
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    "${product.avgRating}  (${product.review_count})",
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
@@ -95,6 +150,30 @@ class ProductItemCard extends StatelessWidget {
                           fontSize: size.height * 0.015,
                           decoration: TextDecoration.lineThrough,
                         ),
+                  ),
+                ],
+              ),
+            ),
+             Padding(
+               padding:  EdgeInsets.symmetric(horizontal: size.width * 0.025 ),
+               child: Row(
+                children: [
+                  Text(
+                    "   Earn ${product.reward_points} ",
+                    style: TextStyle(
+                        color: Color(0xff12C171),
+                        fontSize: 10),
+                  ),
+                  Icon(
+                    Icons.circle,
+                    color: Colors.yellow, // change here
+                    size: 7,
+                  ),
+                  Text(
+                    " VIP points",
+                    style: TextStyle(
+                        color: Color(0xff12C171),
+                        fontSize: 10),
                   ),
                 ],
               ),

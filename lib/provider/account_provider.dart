@@ -10,12 +10,15 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../utils/api/free_shipping_amount_api.dart';
+
 class AccountProvider extends ChangeNotifier {
   late String userToken;
   late int customerId;
   late bool isLoggedIn;
   late bool goldPremium;
   late User? user;
+  late String freeShippingAmount;
 
   AccountProvider() {
     _initData();
@@ -27,6 +30,27 @@ class AccountProvider extends ChangeNotifier {
     isLoggedIn = false;
     goldPremium = false;
     await checkSavedAccount();
+    await getFreeShippingInfo();
+  }
+
+
+  Future<bool> getFreeShippingInfo() async
+  {
+    try{
+      List freeShippingResponse = await sfAPIGetFreeShippingInfo();
+
+      if(freeShippingResponse.isNotEmpty){
+        String status = freeShippingResponse[0]['status'];
+        freeShippingAmount = freeShippingResponse[0]['amount'];
+        String message = freeShippingResponse[0]['message'];
+      }
+
+      print("Best  -->> succ ${freeShippingResponse}");
+
+    }catch(e){
+
+    }
+    return true;
   }
 
   Future<void> checkSavedAccount() async {

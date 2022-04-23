@@ -8,6 +8,10 @@ class APIEndPoints {
     return '$baseUri/products?searchCriteria[filterGroups][0][filters][0][field]=entity_id&searchCriteria[filterGroups][0][filters][0][value]=$id&searchCriteria[filterGroups][0][filters][0][condition_type]=eq';
   }
 
+  static String get freeshipping {
+    return '$baseUri/custom/getfreeshippingamount';
+  }
+
   static String get faceAreasAndParameters {
     return '$baseUri/custom/getFaceSubArea';
   }
@@ -52,6 +56,11 @@ class APIEndPoints {
   static String get getRecommendedColors {
     return '$baseUri/custom/searchCentralColor';
   }
+
+  static String get getFreeShippingInfo {
+    return '$baseUri/custom/getfreeshippingamount';
+  }
+
 
   static String get saveProfilePicture {
     return '$baseUri/custom/updateProfileImage';

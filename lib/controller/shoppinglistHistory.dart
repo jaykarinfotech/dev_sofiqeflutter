@@ -59,7 +59,7 @@ class ShoppingHistory extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getShoppingHistory();
+    //getShoppingHistory();
   }
 
 }

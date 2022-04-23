@@ -13,6 +13,7 @@ import 'package:sofiqe/utils/api/product_list_api.dart';
 import 'package:sofiqe/utils/states/local_storage.dart';
 import 'package:sofiqe/utils/states/location_status.dart';
 
+
 /// Shared Preferences field names
 String dealOfTheDayListField = 'deal-of-the-day-products';
 String dealOfTheDayHourField = 'deal-of-the-day-hour';
@@ -48,35 +49,42 @@ class HomeProvider extends GetxController {
   }
 
   Future<bool> fetchBestSellersList() async {
-    print("Best  --fetchBestSellersList" );
+
 
     bestSellerListStatus.value = DataReadyStatus.FETCHING;
     try {
       Map<String, dynamic> bestSellerResponse = await sfAPIGetBestSellers();
-       print("Best  -->> succ ${bestSellerResponse}");
+
 
       List<dynamic> data = bestSellerResponse["bestseller_product"];
-      print("Best  -->> Ress ${data[0]["name"]}");
 
-      print("Best  -->> SSs ${data.isNotEmpty}");
+        List<Product> list = [];
 
-
-
-        List<Product1> list = [];
-        // print("Best  -->> PPP ${list}");
 
         data.forEach((p) {
-          list.add(Product1(
-            id: int.parse(p['product_id']),
-            name: p['name'],
-            sku: p['sku'],
-            price: double.parse(p['price']),
-            image: p['image'],
 
-          ));
-           print("Best  -->> PPP ${list[0].name}");
+          if(p['product_id'] != "5869") {
+            if(p['price'].runtimeType == Null) p['price'] = 0;
+
+            list.add(Product(
+                id: int.parse(p['product_id']),
+                name: p['name'] != null ? p['name'] : '',
+                sku: p['sku'] != null ? p['sku'] : '',
+                price:  p['price'] != null && p['price'] != "0" ? p['price'].toDouble() : 0.0,
+                image: p['image'] != null ? p['image'] : '',
+                description: "",
+                faceSubArea: p['face_sub_area'] != null && p['face_sub_area'] != "" ? int.parse(p['face_sub_area']) : -1,
+                hasOption: true,
+                avgRating: p['avgrating'] != null ? p['avgrating'] : '0.0',
+                product_url: p['product_url'] != null ? p['product_url'] : '',
+                reward_points: p['reward_points'] != null ? p['reward_points'].toString() : '',
+                review_count: p['review_count'] != null ? p['review_count'].toString() : ''
+            ));
+          }
         });
-        bestSellerListt.value = list;
+      print("Best  -->> PPP ${list}");
+
+      bestSellerList.value = list;
 
       // var response;
       // Map<String, dynamic> map = json.decode(response.body);

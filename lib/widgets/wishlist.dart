@@ -111,7 +111,7 @@ class _NotAddedToWishList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PngIcon(image: 'assets/icons/wishlist_inactive.png');
+    return Icon(Icons.favorite_border,color: Color(0xffD0C5C5),);
   }
 }
 
@@ -120,6 +120,6 @@ class _AddedToWishList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PngIcon(image: 'assets/icons/wishlist_active.png');
+    return Icon(Icons.favorite,color: Colors.red);
   }
 }
