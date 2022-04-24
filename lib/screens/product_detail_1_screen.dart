@@ -325,25 +325,20 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                     height: size.height * 0.03,
                                     width: size.width * 0.67,
                                     alignment: Alignment.centerRight,
-                                    child: RatingBar.builder(
-                                      initialRating: double.parse(
+                                    child:
+                                    RatingBarIndicator(
+                                      rating: double.parse(
                                           responseBody['extension_attributes']
-                                              ['avgrating']),
-                                      minRating: 0,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
+                                          ['avgrating']),
                                       itemCount: 5,
-                                      itemSize: size.height * 0.027,
-                                      unratedColor: Colors.white,
-                                      itemPadding:
-                                          EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemSize: 30.0,
+                                      physics: BouncingScrollPhysics(),
                                       itemBuilder: (context, _) => Icon(
                                         Icons.star,
                                         color: Color(0xffF2CA8A),
                                       ),
-                                      onRatingUpdate: (rating) {
-                                        print(rating);
-                                      },
+                                      unratedColor: Colors.white,
+
                                     ),
                                   ),
                                   Container(

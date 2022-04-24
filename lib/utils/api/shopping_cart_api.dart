@@ -88,10 +88,19 @@ Future<void> sfAPIAddItemToCart(String token, int qouteId, String sku,
   if (userType == 'Guest') {
     url = Uri.parse('${APIEndPoints.addToCartGuest(cartId: token)}');
     print('addToCartGuest  ${url.toString()}');
+    print('Authorization  ${APITokens.bearerToken}');
   } else {
     url = Uri.parse('${APIEndPoints.addToCartCustomer(cartId: token)}');
     print('addToCartUser  ${url.toString()}');
+    print('Authorization  ${await APITokens.customerSavedToken}');
+    print("quote_id : ${token}");
   }
+
+  print("Add To Cart Type : ${userType}");
+  print("Add To Cart URL : ${url}");
+  print("sku : ${sku}");
+
+
   http.Response response = await http.post(
     url,
     headers: userType == 'Guest'

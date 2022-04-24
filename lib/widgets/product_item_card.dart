@@ -98,30 +98,27 @@ class ProductItemCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  height: size.height * 0.02,
-                  width: size.width * 0.23,
-                  alignment: Alignment.bottomCenter,
-                  child: RatingBar.builder(
-                    initialRating: double.parse(product.avgRating),
+                 // height: size.height * 0.01,
+                 // width: size.width * 0.23,
+                  padding: const EdgeInsets.only(left: 30,top: 0,right: 0,bottom: 0),
+                  alignment: Alignment.bottomRight,
+                  child:
+                    RatingBarIndicator(
+                      rating: 3,
+                      itemCount: 5,
+                      itemSize: 15,
+                      direction: Axis.horizontal,
+                    //  itemPadding: 0,
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Color(0xffF2CA8A),
+                      ),
+                      unratedColor: Colors.white,
 
-                    minRating: 0,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    itemCount: 5,
-                    itemSize: 15,
-                    unratedColor: Color(0xffF4F2F0),
-                    itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
-                    itemBuilder: (context, _) => Icon(
-                      Icons.star,
-                      color: Color(0xffF2CA8A),
-                    ),
-                    onRatingUpdate: (rating) {
-                      print("${rating}");
-                    },
-                  ),
+                    )
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 5,top: 5),
+                  padding: EdgeInsets.only(left: 0,top: 5,bottom: 0),
                   width: size.width * .15,
                   alignment: Alignment.bottomLeft,
                   child: Text(
