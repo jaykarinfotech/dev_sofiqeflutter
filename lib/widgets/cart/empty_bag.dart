@@ -47,7 +47,7 @@ class EmptyBagPage extends StatelessWidget {
             onPress: () {
               profileController.screen.value = 0;
               Get.back();
-              pp.goToPage(Pages.SHOP);
+              pp.goToPage(Pages.TRYITON);
 
               // Navigator.of(context).pop();
             },

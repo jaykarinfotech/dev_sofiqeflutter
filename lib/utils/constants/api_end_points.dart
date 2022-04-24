@@ -8,10 +8,6 @@ class APIEndPoints {
     return '$baseUri/products?searchCriteria[filterGroups][0][filters][0][field]=entity_id&searchCriteria[filterGroups][0][filters][0][value]=$id&searchCriteria[filterGroups][0][filters][0][condition_type]=eq';
   }
 
-  static String get freeshipping {
-    return '$baseUri/custom/getfreeshippingamount';
-  }
-
   static String get faceAreasAndParameters {
     return '$baseUri/custom/getFaceSubArea';
   }
@@ -159,6 +155,14 @@ class APIEndPoints {
     return '$baseUri/guest-carts/$cartToken/items';
   }
 
+  static String get userCartDetails {
+    return '$baseUri/carts/mine/';
+  }
+
+  static String get userCartList {
+    return '$baseUri/carts/mine/items';
+  }
+
   static String get questionnaireList {
     return '$baseUri/questionnaire/questions';
   }
@@ -177,6 +181,10 @@ class APIEndPoints {
 
   static String get shareWishList {
     return '$baseUri/wishlist/share';
+  }
+
+  static String get createReview {
+    return '$baseUri/reviews';
   }
 
   static String addToCartGuest({required String cartId}) {

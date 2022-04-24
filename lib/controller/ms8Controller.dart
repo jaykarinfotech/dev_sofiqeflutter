@@ -17,13 +17,13 @@ class Ms8Controller extends GetxController {
   ///  @param [String] collectionId
   ///
 
-  getLookList() async {
+  getLookList(String look) async {
     isLookLoading = true;
     update();
     try {
       var request = http.Request('GET',
           Uri.parse('http://dev.sofiqe.com/rest/default/V1/look/getList'));
-      request.body = '''{"look": "Professional"}''';
+      request.body = json.encode({"look": look});
       request.headers
           .addAll(APIEndPoints.headers(await APITokens.customerSavedToken));
       var streamedResponse = await request.send();
@@ -34,7 +34,14 @@ class Ms8Controller extends GetxController {
         if (result[0]["message"] == "success") {
           ms8model = Ms8Model.fromJson(result[0]);
         } else {
-          Get.snackbar('Error', '${result[0]["message"]}');
+          Get.showSnackbar(
+            GetBar(
+              message: '${result[0]["message"]}',
+              duration: Duration(seconds: 2),
+              isDismissible: true,
+            ),
+          );
+          //Get.snackbar('Error', '${result[0]["message"]}');
         }
       }
     } catch (e) {

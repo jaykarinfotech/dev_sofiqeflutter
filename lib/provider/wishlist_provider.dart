@@ -49,7 +49,7 @@ class WishListProvider extends GetxController {
   Future<bool> addItemToWishList(String sku, int id, int customerId) async {
     try {
       wishlistSkuList.add(WishListModel(sku,"0"));
-      await sfAPIAddItemToWishList(id, customerId);
+      await sfAPIAddItemToWishList(int.parse(sku), customerId);
       await getWishList();
       return true;
     } catch (err) {

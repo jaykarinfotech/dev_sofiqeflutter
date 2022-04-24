@@ -27,11 +27,11 @@ class SelectedProductController extends GetxController {
       update();
       http.Response? response = await NetworkHandler.getMethodCall(
           url:
-              "https://dev.sofiqe.com/api/index.php/api/user/allProductslist", // "http://dev.sofiqe.com/rest/V1/customer/getselectedproducts",
+              "http://dev.sofiqe.com/rest/V1/customer/getselectedproducts",
           headers: APIEndPoints.headers(await APITokens.customerSavedToken));
       print("after api  ${response!.statusCode}");
       if (response.statusCode == 200) {
-        var result = json.decode(response.body);
+        var result = json.decode(json.decode(response.body).toString().replaceAll('\"', '"'));
         if (result['error'] == true) {
           selectedProduct = null;
         } else {
@@ -44,11 +44,26 @@ class SelectedProductController extends GetxController {
       } else {
         selectedProduct = null;
         var result = json.decode(response.body);
-        Get.snackbar('Error', '${result["message"]}', isDismissible: true);
+        Get.showSnackbar(
+          GetSnackBar(
+            message: '${result["message"]}',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
       }
       print("Responce of API is ${response.body}");
     } catch (e) {
-      Get.snackbar('Error', "message", isDismissible: true);
+      selectedProduct = null;
+      Get.showSnackbar(
+        GetSnackBar(
+          message: "message",
+          duration: Duration(seconds: 2),
+          isDismissible: true,
+        ),
+      );
+      isSelectedProductLoading = false;
+      update();
     } finally {
       isSelectedProductLoading = false;
       update();

@@ -40,7 +40,7 @@ class _TryItOnScreenState extends State<TryItOnScreen> {
                 Get.back();
               }else{
                 final PageProvider pp = Get.find();
-                pp.goToPage(Pages.HOME);
+                pp.goToPage(Pages.MAKEOVER);
               }
             },
             child: Icon(

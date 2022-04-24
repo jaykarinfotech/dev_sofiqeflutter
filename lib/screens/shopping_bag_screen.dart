@@ -75,7 +75,9 @@ class _ShoppingBagScreenState extends State<ShoppingBagScreen> {
                         width: size.width,
                         child: Center(
                             child: Text(
-                              Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €'+Provider.of<AccountProvider>(context, listen: false).freeShippingAmount : 'Add € XXX to your cart to get free shipping',
+                              Provider.of<CartProvider>(context).itemCount == 0 ? 'Free shipping above €'+Provider.of<AccountProvider>(context, listen: false)
+                                  .freeShippingAmount : 'Add €'+ (double.parse(Provider.of<AccountProvider>(context, listen: false)
+                                  .freeShippingAmount) - double.parse(Provider.of<CartProvider>(context).chargesList[0]['amount'].toString())).toString()+' to your cart to get free shipping',
                           style: TextStyle(fontSize: 12),
                         ))),
                     Expanded(

@@ -55,9 +55,9 @@ class ReviewController extends GetxController {
           await getMyRiviewsBySkuData(reviewModel!.items![i].sku.toString())
               .then((value) {
             if (value != null) {
-              reviewGlobaleName.add(new ReviewProductModel(sku: reviewModel!.items![i].sku.toString(), name: value.name.toString(), imagePath: value.mediaGalleryEntries!.isNotEmpty ? value.mediaGalleryEntries![0].file.toString() : '') );
+              reviewGlobaleName.add(new ReviewProductModel(sku: reviewModel!.items![i].sku.toString(), name: value.name.toString(), imagePath: value.mediaGalleryEntries!.isNotEmpty ? value.mediaGalleryEntries![0].file.toString() : '', typeId: value.typeId == null ? value.typeId : '') );
             } else {
-              reviewGlobaleName.add(new ReviewProductModel(sku: reviewModel!.items![i].sku.toString(), name: '', imagePath: '') );
+              reviewGlobaleName.add(new ReviewProductModel(sku: reviewModel!.items![i].sku.toString(), name: '', imagePath: '', typeId: '') );
             }
           });
           // await getMyRiviewsBySkuData(reviewModel!.items![i].sku.toString())
@@ -134,9 +134,9 @@ class ReviewController extends GetxController {
           await getMyRiviewsBySkuData(myReviewModel!.items![i].sku.toString())
               .then((value) {
             if (value != null) {
-              reviewName.add(new ReviewProductModel(sku: myReviewModel!.items![i].sku.toString(), name: value.name.toString(), imagePath: value.mediaGalleryEntries!.isNotEmpty ? value.mediaGalleryEntries![0].file.toString() : '') );
+              reviewName.add(new ReviewProductModel(sku: myReviewModel!.items![i].sku.toString(), name: value.name.toString(), imagePath: value.mediaGalleryEntries!.isNotEmpty ? value.mediaGalleryEntries![0].file.toString() : '', typeId: value.typeId.toString()) );
             } else {
-              reviewName.add(new ReviewProductModel(sku: myReviewModel!.items![i].sku.toString(), name: '', imagePath: '') );
+              reviewName.add(new ReviewProductModel(sku: myReviewModel!.items![i].sku.toString(), name: '', imagePath: '', typeId: '') );
             }
           });
         }
@@ -226,12 +226,12 @@ class ReviewController extends GetxController {
       print('share wishlist ${url.toString()}');
       http.Response response = await http.post(
         url,
-        headers: <String, String>{
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${APITokens.customerSavedToken}',
+          'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
         },
        // body: shareWishListModelToJson(model),
-        body: jsonEncode(<String, String>{
+        body: jsonEncode({
           'emails': email,
           'message': messages
         })//json.encode(resBody),

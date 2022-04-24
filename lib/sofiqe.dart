@@ -18,14 +18,12 @@ import 'package:sofiqe/screens/catalog_screen.dart';
 import 'package:sofiqe/widgets/scaffold/scaffold_template.dart';
 import 'package:get/get.dart';
 
-
 GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 //Root class
 class Sofiqe extends StatelessWidget {
   Sofiqe({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +40,17 @@ class Sofiqe extends StatelessWidget {
                     return AccountProvider();
                   },
                 ),
-                ChangeNotifierProvider<CartProvider>(
+                // ChangeNotifierProvider<CartProvider>(
+                //   lazy: false,
+                //   create: (_) {
+                //     return CartProvider();
+                //   },
+                // ),
+                ChangeNotifierProxyProvider<AccountProvider, CartProvider>(
                   lazy: false,
-                  create: (_) {
-                    return CartProvider();
-                  },
+                  create: (context) => CartProvider(),
+                  update: (context, auth, cart) =>
+                      cart!..update(auth.isLoggedIn),
                 ),
                 // ChangeNotifierProvider<MakeOverProvider>(
                 //   lazy: true,

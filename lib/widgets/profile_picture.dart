@@ -24,43 +24,56 @@ class ProfilePicture extends StatelessWidget {
             color: Colors.white,
             height: size.height * 0.1,
             width: size.height * 0.1,
-            child: Center(child: Text('Not logged in', style: Theme.of(context).textTheme.bodyText1!.copyWith(
-              color: Colors.black,
-              fontSize: 12,
-            ),))),
+            child: Center(
+                child: Text(
+              'Not logged in',
+              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                    color: Colors.black,
+                    fontSize: 12,
+                  ),
+            ))),
       );
     }
     return FutureBuilder(
-      future: getProfilePicture(),
-      builder: (BuildContext _, snapshot) {
-        File file = snapshot.data as File;
-        if (!file.existsSync()) {
-          return ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(size.height * 0.1)),
-            child: Container(
-                color: Colors.white,
+        future: getProfilePicture(),
+        builder: (BuildContext _, snapshot) {
+          if (snapshot.data != null) {
+            File file = snapshot.data as File;
+            if (!file.existsSync()) {
+              return ClipRRect(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(size.height * 0.1)),
+                child: Container(
+                    color: Colors.white,
+                    height: size.height * 0.1,
+                    width: size.height * 0.1,
+                    child: Center(
+                        child: Text(
+                      'No Image',
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            color: Colors.black,
+                            fontSize: 12,
+                          ),
+                    ))),
+              );
+            }
+            return ClipRRect(
+              borderRadius:
+                  BorderRadius.all(Radius.circular(size.height * 0.1)),
+              child: Container(
                 height: size.height * 0.1,
                 width: size.height * 0.1,
-                child: Center(child: Text('No Image', style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                  color: Colors.black,
-                  fontSize: 12,
-                ),))),
-          );
-        }
-        return ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(size.height * 0.1)),
-          child: Container(
-            height: size.height * 0.1,
-            width: size.height * 0.1,
-            child: Image.file(
-              snapshot.data as File,
-              fit: BoxFit.cover,
-              height: size.height * 0.09,
-              width: size.height * 0.09,
-            ),
-          ),
-        );
-      },
-    );
+                child: Image.file(
+                  snapshot.data as File,
+                  fit: BoxFit.cover,
+                  height: size.height * 0.09,
+                  width: size.height * 0.09,
+                ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 }

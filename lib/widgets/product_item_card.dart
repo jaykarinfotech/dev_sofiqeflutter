@@ -18,14 +18,17 @@ import 'package:sofiqe/widgets/product_detail/order_notification.dart';
 import 'package:sofiqe/widgets/product_image.dart';
 import 'package:sofiqe/widgets/wishlist.dart';
 import 'package:sofiqe/widgets/round_button.dart';
-import '../../provider/account_provider.dart';
+
+import '../screens/evaluate_screen.dart';
 
 class ProductItemCard extends StatelessWidget {
   final Product product;
+
   ProductItemCard({
     Key? key,
     required this.product,
   }) : super(key: key);
+
 
   final PageProvider pp = Get.find();
   final TryItOnProvider tiop = Get.find();
@@ -33,6 +36,7 @@ class ProductItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -86,47 +90,60 @@ class ProductItemCard extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
               height: size.height * 0.046,
               child: Text(
-                '${product.name}', 
+                '${product.name}',
                 overflow: TextOverflow.fade,
                 style: Theme.of(context).textTheme.headline2!.copyWith(
-                      color: Colors.black,
-                      fontSize: size.height * 0.018,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: Colors.black,
+                  fontSize: size.height * 0.018,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            Row(
-              children: [
-                Container(
-                 // height: size.height * 0.01,
-                 // width: size.width * 0.23,
-                  padding: const EdgeInsets.only(left: 30,top: 0,right: 0,bottom: 0),
-                  alignment: Alignment.bottomRight,
-                  child:
-                    RatingBarIndicator(
-                      rating: 3,
-                      itemCount: 5,
-                      itemSize: 15,
-                      direction: Axis.horizontal,
-                    //  itemPadding: 0,
-                      itemBuilder: (context, _) => Icon(
-                        Icons.star,
-                        color: Color(0xffF2CA8A),
-                      ),
-                      unratedColor: Colors.white,
-
-                    )
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 0,top: 5,bottom: 0),
-                  width: size.width * .15,
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    "${product.avgRating}  (${product.review_count})",
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            GestureDetector(
+              onTap: () {
+                Get.to(() => EvaluateScreen(product.image, product.sku, product.name));
+              },
+              child: Row(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+                children: [
+                  RatingBar.builder(
+                    ignoreGestures: true,
+                    itemSize: 18,
+                    initialRating: double.parse(
+                        product.avgRating),
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 4,
+                    itemPadding: EdgeInsets.symmetric(
+                        horizontal: 0.0),
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: Color(0xffF2CA8A),
+                    ),
+                    onRatingUpdate: (rating) {
+                      print("${rating}");
+                    },
                   ),
-                )
-              ],
+                  SizedBox(width: 10),
+                  Text(
+                    product.avgRating
+                        .toString(),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    '(${product.id.toString()})',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.035),
@@ -136,30 +153,30 @@ class ProductItemCard extends StatelessWidget {
                   Text(
                     '${product.discountedPrice != null ? product.discountedPrice!.toProperCurrencyString() : product.price!.toProperCurrencyString()}',
                     style: Theme.of(context).textTheme.headline2!.copyWith(
-                          color: Colors.black,
-                          fontSize: size.height * 0.015,
-                        ),
+                      color: Colors.black,
+                      fontSize: size.height * 0.015,
+                    ),
                   ),
                   Text(
                     '${product.discountedPrice != null ? '€ ${product.price}' : ''}',
                     style: Theme.of(context).textTheme.headline2!.copyWith(
-                          color: Colors.red,
-                          fontSize: size.height * 0.015,
-                          decoration: TextDecoration.lineThrough,
-                        ),
+                      color: Colors.red,
+                      fontSize: size.height * 0.015,
+                      decoration: TextDecoration.lineThrough,
+                    ),
                   ),
                 ],
               ),
             ),
-             Padding(
-               padding:  EdgeInsets.symmetric(horizontal: size.width * 0.025 ),
-               child: Row(
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: size.width * 0.025 ),
+              child: Row(
                 children: [
                   Text(
                     "   Earn ${product.reward_points} ",
                     style: TextStyle(
                         color: Color(0xff12C171),
-                        fontSize: 10),
+                        fontSize: size.height * 0.01),
                   ),
                   Icon(
                     Icons.circle,
@@ -170,7 +187,7 @@ class ProductItemCard extends StatelessWidget {
                     " VIP points",
                     style: TextStyle(
                         color: Color(0xff12C171),
-                        fontSize: 10),
+                        fontSize: 8),
                   ),
                 ],
               ),
@@ -187,9 +204,9 @@ class ProductItemCard extends StatelessWidget {
                     child: Text(
                       'TRY ON',
                       style: Theme.of(context).textTheme.headline2!.copyWith(
-                            color: Colors.black,
-                            fontSize: size.height * 0.012,
-                          ),
+                        color: Colors.black,
+                        fontSize: size.height * 0.012,
+                      ),
                     ),
                     onPress: () {
                       tiop.received.value = product;
@@ -197,12 +214,14 @@ class ProductItemCard extends StatelessWidget {
                       tiop.directProduct.value = true;
                       pp.goToPage(Pages.TRYITON);
                     },
-                  ),
+                  ), 
                   RoundButton(
                     size: size.height * 0.068,
                     child: PngIcon(image: 'assets/icons/add_to_cart_white.png'),
                     onPress: () async {
-                      if((product.options != null && product.options!.isNotEmpty ) || product.hasOption == true){
+                      if ((product.options != null &&
+                          product.options!.isNotEmpty) ||
+                          product.hasOption == true) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -211,8 +230,9 @@ class ProductItemCard extends StatelessWidget {
                             },
                           ),
                         );
-                      }else{
-                        await Provider.of<CartProvider>(context, listen: false).addHomeProductsToCart(context, product);
+                      } else {
+                        await Provider.of<CartProvider>(context, listen: false)
+                            .addHomeProductsToCart(context, product);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             padding: EdgeInsets.all(0),

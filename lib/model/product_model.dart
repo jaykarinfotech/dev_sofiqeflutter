@@ -1,4 +1,6 @@
 
+import 'dart:ffi';
+
 class Product {
   late int? id;
   late String? name;
@@ -42,7 +44,34 @@ class Product {
     this.getSubAreaName();
   }
 
+/*
+  checkValueType(value,type){
+    if(value == null || value == ""){
+      if(type == "String") return "";
+      else if(type == "Double") return 0.0;
+      else if(type == "int") return 0;
+    }
+    else{
+      if(type == "String" && value.runtimeType != String) {
+        return value.toString();
+      }
+      else if(type == "Double" && value.runtimeType != Double) {
+        return value.toDouble();
+      }
+      else if(type == "int" && value.runtimeType != int){
+        return int.parse(value);
+      }
+    }
+  }
+*/
+
   Product.fromDefaultMap(Map m) {
+
+
+    //try {
+
+
+
     String image = '';
     String description = '';
     int faceSubArea = -1;
@@ -52,7 +81,7 @@ class Product {
     if (m.containsKey('custom_attributes')) {
       List customAttributes = m['custom_attributes'];
       customAttributes.forEach(
-        (attribute) {
+            (attribute) {
           if (attribute['attribute_code'] == 'short_description') {
             description = attribute['value'];
           } else if (attribute['attribute_code'] == 'face_sub_area') {
@@ -67,14 +96,17 @@ class Product {
     }
 
     this.id = m['id'];
-    this.sku = m['sku'] != null ? m['sku'] : "";
-    this.name = m['name'] != null ? m['name'] : "";
+    this.sku = m['sku'] ?? '';
+    this.name = m['name'] ?? '';
     this.price = m['price'] != null ? m['price'].toDouble() : 0.0;
     this.options = m['options'];
     this.image = image != null ? image : '';
-    this.description = description;
+
+
+    this.description = description != null ? description : '';
     this.faceSubArea = faceSubArea;
-    if(m['extension_attributes'] != null && m['extension_attributes']['avgrating'] != null){
+    if (m['extension_attributes'] != null &&
+        m['extension_attributes']['avgrating'] != null) {
       this.avgRating = m['extension_attributes']['avgrating'];
     }
 
@@ -94,7 +126,9 @@ class Product {
     }
 
     this.getSubAreaName();
+
   }
+
 
   Product.fromMap(Map m) {
     int tempId = m.containsKey('id') ? m['id'] : int.parse(m['entity_id']);
@@ -109,16 +143,16 @@ class Product {
     this.image = m['image'] != null ? m['image'] : '';
     this.brand = m['brand'] != null ? m['brand'] : '';
     this.discountedPrice =
-        m['discountedPrice'] != null ? m['discountedPrice'] : null;
+    m['discountedPrice'] != null ? m['discountedPrice'] : null;
     this.faceSubArea =
-        m.containsKey('face_sub_area') ? int.parse(m['face_sub_area']) : -1;
+    m.containsKey('face_sub_area') ? int.parse(m['face_sub_area']) : -1;
     this.color = m.containsKey('face_color')
         ? m['face_color'] != null
-            ? m['face_color']
-            : '#ffffff'
+        ? m['face_color']
+        : '#ffffff'
         : '#ffffff';
     List customAttributes =
-        m.containsKey('custom_attributes') ? m['custom_attributes'] : [];
+    m.containsKey('custom_attributes') ? m['custom_attributes'] : [];
     if(m['extension_attributes'] != null && m['extension_attributes']['avgrating'] != null){
       this.avgRating = m['extension_attributes']['avgrating'];
     }
@@ -138,8 +172,10 @@ class Product {
       this.review_count = m['extension_attributes']['review_count'];
     }
 
+
+
     customAttributes.forEach(
-      (ca) {
+          (ca) {
         if (ca.containsKey('description')) {
           this.description = ca['description'];
         }

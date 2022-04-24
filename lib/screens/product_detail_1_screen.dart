@@ -32,13 +32,15 @@ import 'package:sofiqe/widgets/product_detail/static_details.dart';
 import 'package:sofiqe/widgets/product_image.dart';
 import 'package:sofiqe/widgets/review.dart';
 import 'package:sofiqe/widgets/wishlist.dart';
-import '../utils/api/product_list_api.dart';
 import '../../provider/account_provider.dart';
+import 'evaluate_screen.dart';
 
 class ProductDetail1Screen extends StatefulWidget {
   final String sku;
-  const ProductDetail1Screen({Key? key, this.sku = 'MT-45230167' })
+
+  const ProductDetail1Screen({Key? key, this.sku = 'MT-45230167'})
       : super(key: key);
+
   @override
   _ProductDetail1ScreenState createState() => _ProductDetail1ScreenState();
 }
@@ -58,11 +60,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
     ///todo: uncomment
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     super.initState();
-    freeshipping().then((value) {
-      freeshippingData = value;
-    });
-  }
 
+  }
 
   void setOptions(index, optionMap) {
     simpleProductOptions[index] = optionMap;
@@ -125,17 +124,13 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                       PngIcon(
                         image: 'assets/images/Path_6.png',
                       ),
-                      cartItems == 0 ? SizedBox() :
-                      Container(
+                      cartItems == 0
+                          ? SizedBox()
+                          : Container(
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.red
-                          ),
+                              shape: BoxShape.circle, color: Colors.red),
                           padding: EdgeInsets.all(5),
-                          child: Text(
-                              cartItems.toString()
-                          )
-                      )
+                          child: Text(cartItems.toString()))
                     ],
                   ),
                 ),
@@ -156,26 +151,28 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
 
             // String shortDescription = (responseBody['custom_attributes'][18]['value'] as String).replaceAll(RegExp(r'<p>|</p>'), '');
             String description = '';
-            if(responseBody['custom_attributes'] != null){
+            if (responseBody['custom_attributes'] != null) {
               (responseBody['custom_attributes'] as List).forEach((customAttr) {
                 if (customAttr['attribute_code'] == 'description') {
                   description = (customAttr['value'] as String);
                 }
               });
             }
-    if(responseBody['custom_attributes'] != null){
-            if (description.isEmpty) {
-              (responseBody['custom_attributes'] as List).forEach((customAttr) {
-                if (customAttr['attribute_code'] == 'short_description') {
-                  description = (customAttr['value'] as String);
-                }
-              });
-            }}
-            List options= [];
+            if (responseBody['custom_attributes'] != null) {
+              if (description.isEmpty) {
+                (responseBody['custom_attributes'] as List)
+                    .forEach((customAttr) {
+                  if (customAttr['attribute_code'] == 'short_description') {
+                    description = (customAttr['value'] as String);
+                  }
+                });
+              }
+            }
+            List options = [];
             var type;
             if (responseBody['type_id'] == 'configurable') {
               options = responseBody['extension_attributes']
-                  ['configurable_product_options'];
+              ['configurable_product_options'];
               type = 0;
             } else {
               options = responseBody['options'];
@@ -188,11 +185,13 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                     item['type'] = 'dot_selector';
                   }
                 }
-                if(item['option_type_id'] == null && item['values'] != null && item['values'] is List && (item['values'] as List).isNotEmpty){
+                if (item['option_type_id'] == null &&
+                    item['values'] != null &&
+                    item['values'] is List &&
+                    (item['values'] as List).isNotEmpty) {
                   var tempList = item['values'] as List;
                   item['option_type_id'] = "${tempList[0]['option_type_id']}";
                 }
-
               });
             }
 
@@ -262,7 +261,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                   child: Column(
                                     children: [
                                       ...options.map(
-                                        (items) {
+                                            (items) {
                                           int localIndex = colorIndex++;
                                           if (items['type'] == 'dot_selector') {
                                             return ColorSelector(
@@ -272,7 +271,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                               options: (optionMap) {
                                                 setOptions(
                                                     localIndex, optionMap);
-                                                items['option_type_id'] = optionMap['optionValue'];
+                                                items['option_type_id'] =
+                                                optionMap['optionValue'];
                                               },
                                             );
                                           } else {
@@ -288,7 +288,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                 padding: EdgeInsets.only(top: 40),
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                  MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     // Padding(
@@ -307,7 +307,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                         '${responseBody['name'].toString().toUpperCase()}',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: SplashScreenPageColors.textColor,
+                                          color:
+                                          SplashScreenPageColors.textColor,
                                           fontFamily: 'Arial_regular',
                                           fontSize: 15.0,
                                         ),
@@ -319,40 +320,51 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                   ],
                                 ),
                               ),
+
                               Row(
                                 children: [
-                                  Container(
-                                    height: size.height * 0.03,
-                                    width: size.width * 0.67,
-                                    alignment: Alignment.centerRight,
-                                    child:
-                                    RatingBarIndicator(
-                                      rating: double.parse(
-                                          responseBody['extension_attributes']
-                                          ['avgrating']),
-                                      itemCount: 5,
-                                      itemSize: 30.0,
-                                      physics: BouncingScrollPhysics(),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Color(0xffF2CA8A),
-                                      ),
-                                      unratedColor: Colors.white,
 
+                                  GestureDetector(
+                                    onTap: () {
+                                      print("tap");
+                                      Get.to(() => EvaluateScreen(product.image, product.sku, product.name));
+                                    },
+                                    child: Container(
+                                      height: size.height * 0.03,
+                                      width: size.width * 0.67,
+                                      alignment: Alignment.centerRight,
+
+                                      child:
+                                      RatingBarIndicator(
+                                        rating: double.parse(
+                                            responseBody['extension_attributes']
+                                            ['avgrating']),
+                                        itemCount: 5,
+                                        itemSize: 30.0,
+                                        physics: BouncingScrollPhysics(),
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Color(0xffF2CA8A),
+                                        ),
+                                        unratedColor: Colors.white,
+
+                                      ),
                                     ),
                                   ),
+
                                   Container(
                                     width: size.width * 0.21,
                                     // margin: EdgeInsets.only(
                                     //     left: size.width * 0.06),
-                                    padding: EdgeInsets.fromLTRB(size.width * .14, 14, 0, 0),
+                                    padding: EdgeInsets.fromLTRB(
+                                        size.width * .14, 14, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
-                                        WishList(
+                                        WishListNew(
                                             sku: responseBody['sku'],
                                             itemId: responseBody['id']),
                                       ],
@@ -374,8 +386,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                           child: IconButton(
                                               onPressed: () {
                                                 var product_url = responseBody[
-                                                        'extension_attributes']
-                                                    ['product_url'];
+                                                'extension_attributes']
+                                                ['product_url'];
                                                 Share.share(product_url);
                                               },
                                               icon: Icon(
@@ -405,10 +417,10 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                             .textTheme
                                             .headline2!
                                             .copyWith(
-                                              color: SplashScreenPageColors
-                                                  .textColor,
-                                              fontSize: size.height * 0.021,
-                                            ),
+                                          color: SplashScreenPageColors
+                                              .textColor,
+                                          fontSize: size.height * 0.021,
+                                        ),
                                       ),
                                     ),
                                     Container(
@@ -442,7 +454,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                             right: size.width * 0.04),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                          MainAxisAlignment.end,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -463,13 +475,13 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                                   .textTheme
                                                   .headline2!
                                                   .copyWith(
-                                                    fontSize: 10,
-                                                    color:
-                                                        SplashScreenPageColors
-                                                            .textColor,
-                                                    fontFamily:
-                                                        'Arial, Regular',
-                                                  ),
+                                                fontSize: 10,
+                                                color:
+                                                SplashScreenPageColors
+                                                    .textColor,
+                                                fontFamily:
+                                                'Arial, Regular',
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -502,6 +514,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                     padding: EdgeInsets.only(
                                         left: size.width * 0.05,
                                         top: size.width * 0.01),
+
                                     alignment: Alignment.bottomLeft,
                                     child: Text(
                                       "of € ${((responseBody['price'] as num)/4).toDouble()} with",
@@ -519,12 +532,12 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                         padding: EdgeInsets.only(top: size.height*0.005),
                                         margin: const EdgeInsets.only(left: 5, right: 5),
                                         alignment: Alignment.centerLeft,
-                                       // width: size.width * .50,
+                                        // width: size.width * .50,
                                         // color: Colors.white,
                                         child: Image(
-                                            image: AssetImage(
-                                          "assets/images/clearpay3.png",
-                                        ),
+                                          image: AssetImage(
+                                            "assets/images/clearpay3.png",
+                                          ),
                                           width: 90,
                                         ),
                                       ),
@@ -537,7 +550,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                       child: Icon(
                                         Icons.info_outline,
                                         color: Colors.white,
-                                        size: size.height * 0.023,
+                                        size: size.height * 0.017,
                                       ),
                                     ),
                                   )
@@ -565,7 +578,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                 ),
                               ),
                               ...options.map(
-                                (items) {
+                                    (items) {
                                   int localIndex = index++;
                                   if (items['type'] == 'dot_selector') {
                                     return Container();
@@ -577,7 +590,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                     options: (optionMap) {
                                       setOptions(localIndex, optionMap);
                                       items['option_type_id'] =
-                                          optionMap['optionValue'];
+                                      optionMap['optionValue'];
                                     },
                                   );
                                 },
@@ -590,7 +603,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                     children: [
                                       Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                        EdgeInsets.fromLTRB(20, 10, 20, 10),
                                         child: Container(
                                           child: Text(
                                             '$description',
@@ -602,7 +615,66 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                           ),
                                         ),
                                       ),
-
+                                      // Container(
+                                      //   child: Row(
+                                      //     mainAxisAlignment:
+                                      //         MainAxisAlignment.spaceBetween,
+                                      //     children: [
+                                      //       Padding(
+                                      //         padding: const EdgeInsets.all(0),
+                                      //         child: Text(
+                                      //           // '€ ${(responseBody['price'] as num).toStringAsFixed(2)}',
+                                      //           '${(responseBody['price'] as num).toDouble().toProperCurrencyString()}',
+                                      //           style: Theme.of(context)
+                                      //               .textTheme
+                                      //               .headline2!
+                                      //               .copyWith(
+                                      //                 color:
+                                      //                     SplashScreenPageColors
+                                      //                         .textColor,
+                                      //                 fontSize: 16.0,
+                                      //               ),
+                                      //         ),
+                                      //       ),
+                                      //       Padding(
+                                      //         padding:
+                                      //             const EdgeInsets.all(0.0),
+                                      //         child: Row(
+                                      //           children: [
+                                      //             Padding(
+                                      //               padding:
+                                      //                   const EdgeInsets.only(
+                                      //                       right: 8.0),
+                                      //               child: Icon(
+                                      //                 Icons.circle,
+                                      //                 color: qty > 0
+                                      //                     ? AppColors
+                                      //                         .primaryColor
+                                      //                     : Colors
+                                      //                         .red, // change here
+                                      //                 size: 5,
+                                      //               ),
+                                      //             ),
+                                      //             Text(
+                                      //               qty > 0
+                                      //                   ? 'IN STOCK'
+                                      //                   : 'OUT OF STOCK',
+                                      //               style: Theme.of(context)
+                                      //                   .textTheme
+                                      //                   .headline2!
+                                      //                   .copyWith(
+                                      //                     fontSize: 10,
+                                      //                     color:
+                                      //                         SplashScreenPageColors
+                                      //                             .textColor,
+                                      //                   ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -697,8 +769,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                               );
                             }
 
-
-                            if(options.isNotEmpty){
+                            if (options.isNotEmpty) {
                               options.forEach((po) {
                                 if (po['is_required'] == true &&
                                     po['option_type_id'] == null) {
@@ -728,7 +799,8 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                   .addToCart(context, responseBody['sku'], selectedOptions, 1);
                               qty--;
                               setState(() {});
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
                                 padding: EdgeInsets.all(0),
                                 backgroundColor: AppColors.transparent,
                                 duration: Duration(seconds: 1),
@@ -741,13 +813,14 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                           .toUpperCase()),
                                 ),
                               ));
-                            }else{
+                            } else {
                               await Provider.of<CartProvider>(context,
                                   listen: false)
-                                  .addToCart(context, responseBody['sku'], [], 1);
+                                  .addToCart(context, responseBody['sku'], [], responseBody['type_id'] == 'simple' ? 0 : 1);
                               qty--;
                               setState(() {});
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
                                 padding: EdgeInsets.all(0),
                                 backgroundColor: AppColors.transparent,
                                 duration: Duration(seconds: 1),
@@ -761,8 +834,6 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                 ),
                               ));
                             }
-
-
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -777,7 +848,7 @@ class _ProductDetail1ScreenState extends State<ProductDetail1Screen> {
                                     fontSize: 11,
                                     fontFamily: 'Arial, Regular',
                                     color:
-                                        AppColors.navigationBarSelectedColor),
+                                    AppColors.navigationBarSelectedColor),
                               ),
                             ],
                           ),

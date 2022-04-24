@@ -9,6 +9,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:sofiqe/controller/controllers.dart';
 import 'package:sofiqe/provider/account_provider.dart';
+import 'package:sofiqe/provider/cart_provider.dart';
 import 'package:sofiqe/provider/page_provider.dart';
 import 'package:sofiqe/utils/api/user_account_api.dart';
 import 'package:sofiqe/widgets/capsule_button.dart';
@@ -81,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
       profileController.screen.value = 0;
       Navigator.pop(c);
       pp.goToPage(Pages.MAKEOVER);
+      Provider.of<CartProvider>(context, listen: false).fetchCartDetails();
     } else {
       ScaffoldMessenger.of(c).showSnackBar(SnackBar(
         content: Text('Incorrect Username or Password'),

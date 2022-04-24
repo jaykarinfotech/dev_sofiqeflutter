@@ -25,17 +25,6 @@ Future<Map> sfAPIGetCatalogUnfilteredItems(int page) async {
   }
 }
 
-Future<List<dynamic>> freeshipping() async {
-  Uri url = Uri.parse('${APIEndPoints.freeshipping}');
-  http.Response response = await http.get(url, headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Authorization': 'Bearer ${APITokens.adminBearerId}',
-  });
-  List freeshippinglist = jsonDecode(response.body);
-  return freeshippinglist;
-}
-
 Future<Map> sfAPIGetUnfilteredFaceAreaItems(int page, int faceArea) async {
   try {
     Uri url =
@@ -82,10 +71,8 @@ Future<Map> sfAPIFetchProductItems(int page, int faceSubArea) async {
       throw await response.stream.bytesToString();
     }
 
-    print(url);
-
     Map responseBody = json.decode(await response.stream.bytesToString());
-    print(responseBody);
+
     return responseBody;
   } catch (err) {
     rethrow;
@@ -174,7 +161,6 @@ Future<List> sfAPIGetCatalogBetweenPriceItems(
         "face_area":face_area_type
       },
     );
-
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
@@ -202,10 +188,16 @@ Future<Map<String, dynamic>> sfAPIGetBestSellers() async {
       'Authorization': 'Bearer ${APITokens.bearerToken}',
     },
   );
-
+  print(response.body);
   if (response.statusCode == 200) {
     // List<dynamic> responseBody = json.decode(response.body);
     Map<String, dynamic> map = json.decode(response.body);
+    print("Best  -->> first ${map}");
+
+    // List<dynamic> data = map["bestseller_product"];
+    // print(data[0]["name"]);
+    //
+    // print("Best  -->> second ${data[0]["name"]}");
 
     return map;
   } else {

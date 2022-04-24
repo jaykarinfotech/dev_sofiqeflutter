@@ -210,7 +210,7 @@ class _CartItemState extends State<CartItem> {
   Future<void> changeQuantity(BuildContext c, int current, Map item) async {
     var cartProvider = Provider.of<CartProvider>(c, listen: false);
     print(item);
-    int type = item['product_type'] == 'configurable' ? 0 : 1;
+    int type = item['product_type'] == 'configurable' ? 1 : 0;
     try {
 
       await cartProvider.removeFromCart('${item['item_id']}', refresh: false);

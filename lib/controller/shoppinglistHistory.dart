@@ -56,6 +56,40 @@ class ShoppingHistory extends GetxController {
     }
   }
 
+
+  orderAgain(String orderId) async {
+    try {
+      http.Response? response = await NetworkHandler.getMethodCall(
+          url: "https://dev.sofiqe.com/rest/V1/customers/$orderId/buyagain",
+          headers: APIEndPoints.headers(await APITokens.customerSavedToken));
+
+      if (response!.statusCode == 200) {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Please go to cart for checkout.',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
+      } else if (response.statusCode == 401) {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Something went wrong.',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
+      } else {
+        var result = json.decode(response.body);
+        Get.snackbar('Error', '${result[0]["message"]}', isDismissible: true);
+      }
+    } catch (e) {
+    }
+  }
+
+
+
+
   @override
   void onInit() {
     super.onInit();

@@ -115,7 +115,6 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                 alignment: Alignment.topRight,
                                 children: [
                                   Container(
-                                    margin: EdgeInsets.only(right: 15),
                                     width: Get.width * 0.10,
                                     child: CircleAvatar(
                                       radius: 28,
@@ -273,7 +272,18 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                     child: Icon(Icons.share,
                                                         color: Colors.blueGrey),
                                                     onTap: () {
-                                                      showShareDialog(context);
+                                                      if(wshCntrl.wishlistModel!.result!.isNotEmpty) {
+                                                        showShareDialog(
+                                                            context);
+                                                      }else{
+                                                        Get.showSnackbar(
+                                                          GetSnackBar(
+                                                            message: 'No wishlist to share.',
+                                                            duration: Duration(seconds: 2),
+                                                            isDismissible: true,
+                                                          ),
+                                                        );
+                                                      }
                                                     },
                                                   ),
                                                 ),
@@ -504,42 +514,28 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                       listen:
                                                                           false);
                                                               //   print("CartProvider  -->> SSs ${cartP.cartToken}");
-                                                              await cartP.addHomeProductsToCart(context, product
-                                                                  .Product(
-                                                                      name: wshCntrl
+                                                              await cartP.addToCart(
+                                                                  context,
+                                                                  wshCntrl
+                                                                      .wishlistModel!
+                                                                      .result![
+                                                                          i]
+                                                                      .product!
+                                                                      .sku!,
+                                                                  wshCntrl.wishlistModel!.result![i].product!.typeId ==
+                                                                          'simple'
+                                                                      ? []
+                                                                      : wshCntrl
                                                                           .wishlistModel!
                                                                           .result![
                                                                               i]
                                                                           .product!
-                                                                          .name,
-                                                                      id: int
-                                                                          .parse(
-                                                                        wshCntrl
-                                                                            .wishlistModel!
-                                                                            .result![i]
-                                                                            .productId
-                                                                            .toString(),
-                                                                      ),
-                                                                      image: wshCntrl
-                                                                          .wishlistModel!
-                                                                          .result![
-                                                                              i]
-                                                                          .product!
-                                                                          .image
-                                                                          .toString(),
-                                                                      price: double.parse(
-                                                                          wshCntrl.wishlistModel!.result![i].product!.price
-                                                                              .toString()),
-                                                                      sku: wshCntrl
-                                                                          .wishlistModel!
-                                                                          .result![i]
-                                                                          .product!
-                                                                          .sku
-                                                                          .toString(),
-                                                                      color: wshCntrl.wishlistModel!.result![i].product!.shadeColor.toString(),
-                                                                      description: wshCntrl.wishlistModel!.result![i].product!.shortDescription.toString(),
-                                                                      faceSubArea: 0,
-                                                                      avgRating: "0.0"));
+                                                                          .options,
+                                                                  wshCntrl.wishlistModel!.result![i].product!
+                                                                              .typeId ==
+                                                                          'simple'
+                                                                      ? 0
+                                                                      : 1);
                                                               print(
                                                                   "Name  -->> EEE ${wshCntrl.wishlistModel!.result![i].product!.image}");
 
@@ -772,10 +768,11 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () async {
-                                                                        await Provider.of<CartProvider>(context, listen: false).addToCart(context,
+                                                                        await Provider.of<CartProvider>(context, listen: false).addToCart(
+                                                                            context,
                                                                             reviewController.myReviewModel!.items![index1].sku!,
                                                                             [],
-                                                                            1);
+                                                                            reviewController.reviewName[index1].typeId == 'simple' ? 0 : 1);
                                                                         ScaffoldMessenger.of(context)
                                                                             .showSnackBar(SnackBar(
                                                                           padding:
@@ -971,10 +968,11 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                                                         GestureDetector(
                                                                           onTap:
                                                                               () async {
-                                                                            await Provider.of<CartProvider>(context, listen: false).addToCart(context,
+                                                                            await Provider.of<CartProvider>(context, listen: false).addToCart(
+                                                                                context,
                                                                                 reviewController.reviewModel!.items![index2].sku!,
                                                                                 [],
-                                                                                1);
+                                                                                reviewController.reviewGlobaleName[index2].typeId == 'simple' ? 0 : 1);
                                                                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                                                               padding: EdgeInsets.all(0),
                                                                               backgroundColor: Colors.transparent,
@@ -1171,7 +1169,7 @@ class _ReviewsMS6State extends State<ReviewsMS6> {
                                 Navigator.pop(context);
                               } else {
                                 Get.showSnackbar(
-                                  GetBar(
+                                  GetSnackBar(
                                     message: 'Please enter required details.',
                                     duration: Duration(seconds: 2),
                                     isDismissible: true,

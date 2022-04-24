@@ -14,7 +14,6 @@ import 'package:sofiqe/widgets/makeover/make_over_login_custom_widget.dart';
 import 'package:sofiqe/widgets/my_sofiqe/profile_information.dart';
 import '../my_sofiqe.dart';
 import '../premium_subscription_screen.dart';
-import '../shopping_bag_screen.dart';
 import '../try_it_on_screen.dart';
 
 class Ms1Profile extends StatefulWidget {
@@ -141,9 +140,10 @@ class _Ms1ProfileState extends State<Ms1Profile>
               size: 15,
             ),
             handler: () async {
-              !Provider.of<AccountProvider>(context, listen: false).isLoggedIn
-                  ? profileController.screen.value = 1
-                  : Get.to(() => TryItOnScreen());
+              // !Provider.of<AccountProvider>(context, listen: false).isLoggedIn
+              //     ? profileController.screen.value = 1
+              //     : Get.to(() => TryItOnScreen());
+              Get.to(() => TryItOnScreen());
             }),
         Divider(),
         displayTile(
@@ -192,9 +192,9 @@ class _Ms1ProfileState extends State<Ms1Profile>
               GetBuilder<MsProfileController>(builder: (contrl) {
                 return (contrl.isRecentLoading)
                     ? Container(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ))
+                        child: Center(
+                        child: CircularProgressIndicator(),
+                      ))
                     : (contrl.recentItem == null ||
                             contrl.recentItem!.data!.items!.length == 0 ||
                             contrl.recentItem!.data!.items!.first.id == '')
@@ -203,11 +203,13 @@ class _Ms1ProfileState extends State<Ms1Profile>
                             child: Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  !Provider.of<AccountProvider>(context,
-                                              listen: false)
-                                          .isLoggedIn
-                                      ? profileController.screen.value = 1
-                                      : Get.to(() => TryItOnScreen());
+                                  // !Provider.of<AccountProvider>(context,
+                                  //             listen: false)
+                                  //         .isLoggedIn
+                                  //     ? profileController.screen.value = 1
+                                  //     : Get.to(() => TryItOnScreen());
+
+                                  Get.to(() => TryItOnScreen());
                                 },
                                 child: Container(
                                   height: 50,
@@ -312,7 +314,9 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
-                                            SizedBox(height: 5,),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
                                             Container(
                                               child: RatingBar.builder(
                                                 initialRating: 3,
@@ -321,9 +325,11 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                                 allowHalfRating: true,
                                                 itemCount: 5,
                                                 itemSize: 12.0,
-                                                itemPadding: EdgeInsets.symmetric(
-                                                    horizontal: 4.0),
-                                                itemBuilder: (context, _) => Icon(
+                                                itemPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 4.0),
+                                                itemBuilder: (context, _) =>
+                                                    Icon(
                                                   Icons.star,
                                                   color: Colors.amber,
                                                 ),
@@ -332,7 +338,9 @@ class _Ms1ProfileState extends State<Ms1Profile>
                                                 },
                                               ),
                                             ),
-                                            SizedBox(height: 5,),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
                                             Text(
                                               'REVIEW',
                                               style: TextStyle(fontSize: 9),
@@ -362,9 +370,9 @@ class _Ms1ProfileState extends State<Ms1Profile>
               GetBuilder<MsProfileController>(builder: (contrl) {
                 return (contrl.isRecentLoading)
                     ? Container(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ))
+                        child: Center(
+                        child: CircularProgressIndicator(),
+                      ))
                     : (contrl.recentItem == null ||
                             contrl.recentItem!.data!.items!.length == 0)
                         ? Container(
@@ -372,11 +380,13 @@ class _Ms1ProfileState extends State<Ms1Profile>
                             child: Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  !Provider.of<AccountProvider>(context,
-                                              listen: false)
-                                          .isLoggedIn
-                                      ? profileController.screen.value = 1
-                                      : Get.to(() => TryItOnScreen());
+                                  // !Provider.of<AccountProvider>(context,
+                                  //             listen: false)
+                                  //         .isLoggedIn
+                                  //     ? profileController.screen.value = 1
+                                  //     : Get.to(() => TryItOnScreen());
+                                  Get.to(() => TryItOnScreen());
+
                                 },
                                 child: Container(
                                   height: 50,
@@ -564,7 +574,8 @@ class _Ms1ProfileState extends State<Ms1Profile>
             ),
             handler: () {
               Get.to(() => PrivacyPolicyScreen(
-                    isTerm: false, isReturnPolicy: false,
+                    isTerm: false,
+                    isReturnPolicy: false,
                   ));
             }),
         Divider(),
@@ -577,7 +588,8 @@ class _Ms1ProfileState extends State<Ms1Profile>
             ),
             handler: () {
               Get.to(() => PrivacyPolicyScreen(
-                    isTerm: true, isReturnPolicy: false,
+                    isTerm: true,
+                    isReturnPolicy: false,
                   ));
             }),
         Divider(),
@@ -590,8 +602,9 @@ class _Ms1ProfileState extends State<Ms1Profile>
             ),
             handler: () {
               Get.to(() => PrivacyPolicyScreen(
-                isTerm: true, isReturnPolicy: true,
-              ));
+                    isTerm: true,
+                    isReturnPolicy: true,
+                  ));
             }),
       ],
     ));

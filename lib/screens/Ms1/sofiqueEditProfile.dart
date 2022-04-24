@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sofiqe/controller/msProfileController.dart';
+import 'package:sofiqe/helper/CardExpirationFormatter.dart';
 import 'package:sofiqe/provider/account_provider.dart';
 import 'package:sofiqe/screens/Ms1/editProfileAppbar.dart';
 import 'package:sofiqe/utils/constants/api_tokens.dart';
@@ -129,7 +130,8 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                     child: coverWidgetWithPadding(
                         child: Text(
                       'SHIPPING ADDRESS',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                     )),
                   ),
                   // displayTextFieldContainer(
@@ -223,8 +225,8 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                                 children: [
                                   Text(
                                     "BILLING ADDRESS",
-                                    style:
-                                        TextStyle(fontSize: 11, color: Colors.black),
+                                    style: TextStyle(
+                                        fontSize: 11, color: Colors.black),
                                   ),
                                 ],
                               ),
@@ -235,21 +237,21 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                             children: [
                               Text(
                                 "Same as shipping address",
-                                style:
-                                    TextStyle(fontSize: 11, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.black),
                               ),
                               Transform.scale(
                                 scale: 0.8,
-                                  child: CupertinoSwitch(
-                                      value: _.isShiping.value,
-                                      activeColor: Colors.green ,
-                                      trackColor:  Colors.red,
-                                      thumbColor: Colors.white ,
-                                      onChanged: (val) {
-                                        _.isShiping.value = val;
-                                        setState(() {});
-                                      }),
-                                ),
+                                child: CupertinoSwitch(
+                                    value: _.isShiping.value,
+                                    activeColor: Colors.green,
+                                    trackColor: Colors.red,
+                                    thumbColor: Colors.white,
+                                    onChanged: (val) {
+                                      _.isShiping.value = val;
+                                      setState(() {});
+                                    }),
+                              ),
                             ],
                           ),
                         ],
@@ -303,12 +305,13 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                             children: [
                               Text(
                                 "CARD DETAILS",
-                                style:
-                                    TextStyle(fontSize: 11, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.black),
                               ),
                               Text(
                                 ' *',
-                                style: TextStyle(fontSize: 11, color: Colors.red),
+                                style:
+                                    TextStyle(fontSize: 11, color: Colors.red),
                               ),
                             ],
                           ),
@@ -331,11 +334,20 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                                 child: Container(
                                   // width: 150,
                                   child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    maxLength: 5,
+                                    inputFormatters: [
+                                      CardExpirationFormatter(),
+                                    ],
                                     controller: _.monthCardController,
                                     decoration: InputDecoration(
                                       fillColor: Colors.white,
                                       filled: true,
                                       border: InputBorder.none,
+                                      counter: SizedBox(
+                                        width: 0,
+                                        height: 0,
+                                      ),
                                       hintText: 'MONTH / YEAR',
                                     ),
                                   ),
@@ -348,10 +360,16 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                                 flex: 2,
                                 // width: 150,
                                 child: TextFormField(
+                                  maxLength: 4,
                                   controller: _.cvcController,
+                                  keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     fillColor: Colors.white,
                                     filled: true,
+                                    counter: SizedBox(
+                                      width: 0,
+                                      height: 0,
+                                    ),
                                     border: InputBorder.none,
                                     hintText: 'CVC',
                                   ),
@@ -404,7 +422,8 @@ class _SofiqueEditProfileState extends State<SofiqueEditProfile> {
                               onTap: () async {
                                 setState(() {});
                                 //need to use form validator
-                                final isValid = _formKey.currentState?.validate();
+                                final isValid =
+                                    _formKey.currentState?.validate();
                                 if (!checkEmpty()) {
                                   print("true");
                                   if (await _.updateUserProfile()) {

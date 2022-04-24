@@ -314,7 +314,7 @@ class Body extends StatelessWidget {
           CapsuleButton(
             backgroundColor: Color(0xFFF2CA8A),
             onPress: () async {
-              pp.goToPage(Pages.MAKEOVER);
+              pp.goToPage(Pages.SHOP);
               profileController.screen.value = 0;
               // await Navigator.push(
               //     context,

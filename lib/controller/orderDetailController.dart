@@ -38,4 +38,11 @@ class OrderDetailController extends GetxController {
       update();
     }
   }
+
+
+
+
+
+
+
 }

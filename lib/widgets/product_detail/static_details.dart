@@ -14,7 +14,6 @@ class StaticDetails extends StatelessWidget {
       (key, value) {
         var option;
         switch (key) {
-
           case 'shippinganddelivery':
             option = 'Shipping And Delivery';
             break;
@@ -67,6 +66,8 @@ class __StaticDetailState extends State<_StaticDetail> {
                           child: Text(
                             widget.optionName[0].toLowerCase()=="packaging"?
                             '':
+                        
+
                             '${widget.optionName[0].toUpperCase()}${widget.optionName.substring(1)}',
                             style: TextStyle(
                               color: SplashScreenPageColors.textColor,

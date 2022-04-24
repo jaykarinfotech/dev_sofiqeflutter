@@ -56,7 +56,6 @@ class CatalogProvider extends GetxController {
     FaceArea.ALL: "ALL",
   };
 
-
   // Constructor
   CatalogProvider() {
     _initializedData();
@@ -155,7 +154,6 @@ class CatalogProvider extends GetxController {
     if (ft != filterType.value) {
       filterType.value = ft;
     }
-
     switch (ft) {
       case FilterType.SKINTONE:
         SkinToneFilter stf = SkinToneFilter();
@@ -647,7 +645,6 @@ class CatalogProvider extends GetxController {
       if (!catalogUnfilteredItemsMap.containsKey('items')) {
         throw 'Server failed to send catalog list';
       }
-
       List catalogUnfilteredItemsTempList = catalogUnfilteredItemsMap['items'];
       List<Product> catalogUnfilteredItemsTempListOfProducts =
           catalogUnfilteredItemsTempList.map<Product>(
@@ -655,7 +652,6 @@ class CatalogProvider extends GetxController {
           return Product.fromDefaultMap(m);
         },
       ).toList();
-
       catalogItemsList.addAll(catalogUnfilteredItemsTempListOfProducts);
       if (sortReviewBased) {
         if (selectedStar.value == 10) {
@@ -683,7 +679,7 @@ class CatalogProvider extends GetxController {
     } catch (err) {
       catalogItemsCurrentPage.value--;
       catalogItemsStatus.value = DataReadyStatus.ERROR;
-      print("Review Load Data --> ${err}");
+      print(err);
       try {
         Get.showSnackbar(
           GetSnackBar(
@@ -704,10 +700,10 @@ class CatalogProvider extends GetxController {
 
       if (faceArea.value == FaceArea.ALL) {
         Map<String, dynamic> bestSellerResponse = await sfAPIGetBestSellers();
-        List<dynamic> tempProductsMap = bestSellerResponse['bestseller_product'];
+        var responseList = bestSellerResponse["bestseller_product"];
         List<Product> tempProductList = <Product>[];
 
-        tempProductsMap.forEach(
+        responseList.forEach(
               (p) {
 
             if(p['product_id'] != "5869") {
@@ -732,10 +728,11 @@ class CatalogProvider extends GetxController {
             //tempProductList.add(Product.fromMap(p));
           },
         );
-        this.catalogItemsList.addAll(tempProductList);
 
+        this.catalogItemsList.addAll(tempProductList);
       } else {
-        List responseList = await sfAPIGetCatalogPopularItems(catalogItemsCurrentPage.value);
+        List responseList =
+            await sfAPIGetCatalogPopularItems(catalogItemsCurrentPage.value);
         dynamic responseMap = responseList[0];
         if (!responseMap.containsKey('products')) {
           throw 'Products not found in response';
@@ -746,23 +743,29 @@ class CatalogProvider extends GetxController {
           List<Product> tempProductList = <Product>[];
 
           tempProductsMap.forEach(
-                (value) {
-              if (value['face_area'] == null || faceArea.value == FaceArea.ALL) {
+            (value) {
+              if (value['face_area'] == null ||
+                  faceArea.value == FaceArea.ALL) {
                 tempProductList.add(
                   Product(
                       id: int.parse(value['entity_id']),
                       sku: value['sku'],
-                      image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                      description: value['short_description'] ?? value['description'],
+                      image: value['image'] ??
+                          value['small_image'] ??
+                          value['thumbnail'] ??
+                          "",
+                      description:
+                          value['short_description'] ?? value['description'],
                       faceSubArea: int.parse(value['face_sub_area']),
                       name: value['name'],
                       price: double.parse(value['price']),
                       options: [],
-                      avgRating:
-                      value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
+                      avgRating: value['extension_attributes'] != null &&
+                              value['extension_attributes']['avgrating'] != null
                           ? value['extension_attributes']['avgrating']
                           : "0.0",
-                      hasOption: value['required_options'] == "1" ? true : false),
+                      hasOption:
+                          value['required_options'] == "1" ? true : false),
                 );
               } else {
                 var id = faceAreaToIdMapping[faceArea.value] as int;
@@ -771,17 +774,23 @@ class CatalogProvider extends GetxController {
                     Product(
                         id: int.parse(value['entity_id']),
                         sku: value['sku'],
-                        avgRating:
-                        value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
+                        avgRating: value['extension_attributes'] != null &&
+                                value['extension_attributes']['avgrating'] !=
+                                    null
                             ? value['extension_attributes']['avgrating']
                             : "0.0",
-                        image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                        description: value['short_description'] ?? value['description'],
+                        image: value['image'] ??
+                            value['small_image'] ??
+                            value['thumbnail'] ??
+                            "",
+                        description:
+                            value['short_description'] ?? value['description'],
                         faceSubArea: int.parse(value['face_sub_area']),
                         name: value['name'],
                         price: double.parse(value['price']),
                         options: [],
-                        hasOption: value['required_options'] == "1" ? true : false),
+                        hasOption:
+                            value['required_options'] == "1" ? true : false),
                   );
                 }
               }
@@ -793,23 +802,29 @@ class CatalogProvider extends GetxController {
           List<Product> tempProductList = <Product>[];
 
           tempProductsMap.forEach(
-                (key, value) {
-              if (value['face_area'] == null || faceArea.value == FaceArea.ALL) {
+            (key, value) {
+              if (value['face_area'] == null ||
+                  faceArea.value == FaceArea.ALL) {
                 tempProductList.add(
                   Product(
                       id: int.parse(value['entity_id']),
                       sku: value['sku'],
-                      image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                      description: value['short_description'] ?? value['description'],
+                      image: value['image'] ??
+                          value['small_image'] ??
+                          value['thumbnail'] ??
+                          "",
+                      description:
+                          value['short_description'] ?? value['description'],
                       faceSubArea: int.parse(value['face_sub_area']),
                       name: value['name'],
                       price: double.parse(value['price']),
                       options: [],
-                      avgRating:
-                      value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
+                      avgRating: value['extension_attributes'] != null &&
+                              value['extension_attributes']['avgrating'] != null
                           ? value['extension_attributes']['avgrating']
                           : "0.0",
-                      hasOption: value['required_options'] == "1" ? true : false),
+                      hasOption:
+                          value['required_options'] == "1" ? true : false),
                 );
               } else {
                 var id = faceAreaToIdMapping[faceArea.value] as int;
@@ -818,17 +833,23 @@ class CatalogProvider extends GetxController {
                     Product(
                         id: int.parse(value['entity_id']),
                         sku: value['sku'],
-                        image: value['image'] ?? value['small_image'] ?? value['thumbnail'] ?? "",
-                        description: value['short_description'] ?? value['description'],
+                        image: value['image'] ??
+                            value['small_image'] ??
+                            value['thumbnail'] ??
+                            "",
+                        description:
+                            value['short_description'] ?? value['description'],
                         faceSubArea: int.parse(value['face_sub_area']),
                         name: value['name'],
-                        avgRating:
-                        value['extension_attributes'] != null && value['extension_attributes']['avgrating'] != null
+                        avgRating: value['extension_attributes'] != null &&
+                                value['extension_attributes']['avgrating'] !=
+                                    null
                             ? value['extension_attributes']['avgrating']
                             : "0.0",
                         price: double.parse(value['price']),
                         options: [],
-                        hasOption: value['required_options'] == "1" ? true : false),
+                        hasOption:
+                            value['required_options'] == "1" ? true : false),
                   );
                 }
               }
@@ -845,21 +866,21 @@ class CatalogProvider extends GetxController {
       catalogItemsCurrentPage.value--;
       catalogItemsStatus.value = DataReadyStatus.ERROR;
       print(err);
-      Get.showSnackbar(
-        GetBar(
-          message: 'Could not load more products',
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Could not load more products',
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } catch (ee) {
+        return false;
+      }
       return false;
     }
   }
 
-
   Future<bool> fetchBetweenPriceItems() async {
-
-
-
     try {
       var face_area = faceAreaToIdTextMapping[faceArea.value] as String;
 
@@ -879,7 +900,6 @@ class CatalogProvider extends GetxController {
       List<Product> tempProductList = <Product>[];
       productMap.forEach(
         (key, value) {
-
           tempProductList.add(
             Product(
                 id: int.parse(value['entity_id']),
@@ -895,7 +915,6 @@ class CatalogProvider extends GetxController {
                 options: [],
                 hasOption: value['required_options'] == "1" ? true : false),
           );
-
           /*if (value['face_area'] == null || faceArea.value == FaceArea.ALL) {
             tempProductList.add(
               Product(
@@ -916,9 +935,6 @@ class CatalogProvider extends GetxController {
           }
           else {
             var id = faceAreaToIdMapping[faceArea.value] as int;
-            print("....... ${id.toString()}");
-            print("....... ${value['face_area'].toString()}");
-
             if (value['face_area'].toString() == id.toString()) {
               tempProductList.add(
                 Product(

@@ -38,4 +38,64 @@ class LooksController extends GetxController {
       update();
     }
   }
+
+
+
+  Future<void> createReview(String detail, String name, String sku, int generalRating, int priceRating, int qualityRating) async {
+    try {
+      Uri url = Uri.parse('${APIEndPoints.createReview}');
+      print('share wishlist ${url.toString()}');
+      http.Response response = await http.post(
+          url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${APITokens.bearerToken}',
+          },
+          body: jsonEncode({
+            "review": {
+              "title": "User Review",
+              "detail": detail,
+              "nickname": name,
+              "ratings": [
+                {
+                  "rating_name": "General",
+                  "value": generalRating
+                },
+                {
+                  "rating_name": "Quality",
+                  "value": qualityRating
+                },
+                {
+                  "rating_name": "Price",
+                  "value": priceRating
+                }
+              ],
+              "review_entity": "product",
+              "review_status": 2,
+              "entity_pk_value": int.parse(sku)
+            }
+          })//json.encode(resBody),
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Your review is shared successfully',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
+      }else{
+        Get.showSnackbar(
+          GetSnackBar(
+            message: 'Review is not shared',
+            duration: Duration(seconds: 2),
+            isDismissible: true,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error creating review: $e');
+    }
+  }
 }

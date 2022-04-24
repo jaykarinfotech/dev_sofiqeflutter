@@ -25,4 +25,12 @@ class APITokens {
     print("USERTOKEN = " + token.toString());
     return token;
   }
+
+  static Future<String> get cartToken async {
+    Map userTokenMap = await sfQueryForSharedPrefData(
+        fieldName: 'cart-token', type: PreferencesDataType.STRING);
+    String token = userTokenMap['cart-token'];
+    print("CARTTOKEN = " + token.toString());
+    return token;
+  }
 }

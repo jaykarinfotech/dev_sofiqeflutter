@@ -47,6 +47,27 @@ Future<List<dynamic>> sfAPIGetGuestCartList(String cartToken) async {
   }
 }
 
+
+Future<List<dynamic>> sfAPIGetUserCartList() async {
+  try {
+    Uri url = Uri.parse('${APIEndPoints.userCartList}');
+    http.Response response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
+      },
+    );
+
+    List<dynamic> responseMap = json.decode(response.body);
+    return responseMap;
+  } catch (err) {
+    print('Error sfAPIGetUserCartList: $err');
+    rethrow;
+  }
+}
+
 Future<Map<String, dynamic>> sfAPIGetGuestCartDetails(String cartToken) async {
   Uri url = Uri.parse('${APIEndPoints.guestCartDetails}$cartToken');
   http.Response response = await http.get(
@@ -55,6 +76,21 @@ Future<Map<String, dynamic>> sfAPIGetGuestCartDetails(String cartToken) async {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer ${APITokens.bearerToken}',
+    },
+  );
+
+  Map<String, dynamic> responseMap = json.decode(response.body);
+  return responseMap;
+}
+
+Future<Map<String, dynamic>> sfAPIGetUserCartDetails() async {
+  Uri url = Uri.parse('${APIEndPoints.userCartDetails}');
+  http.Response response = await http.get(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
     },
   );
 
@@ -88,18 +124,41 @@ Future<void> sfAPIAddItemToCart(String token, int qouteId, String sku,
   if (userType == 'Guest') {
     url = Uri.parse('${APIEndPoints.addToCartGuest(cartId: token)}');
     print('addToCartGuest  ${url.toString()}');
-    print('Authorization  ${APITokens.bearerToken}');
   } else {
     url = Uri.parse('${APIEndPoints.addToCartCustomer(cartId: token)}');
     print('addToCartUser  ${url.toString()}');
-    print('Authorization  ${await APITokens.customerSavedToken}');
-    print("quote_id : ${token}");
   }
 
-  print("Add To Cart Type : ${userType}");
-  print("Add To Cart URL : ${url}");
-  print("sku : ${sku}");
+  var requestData= (type == 0)
+      ? userType == 'Guest'
+      ? {
+    'cartItem': {
+      'sku': '$sku',
+      'qty': quantity == 0 ? 1 : quantity
+    },
+  }
+      : {
+    'cartItem': {
+      'sku': '$sku',
+      'qty': quantity == 0 ? 1 : quantity,
+      'quote_id': '$token',
+    },
+  }
+      : {
+    'cartItem': {
+      'sku': '$sku',
+      'qty': quantity == 0 ? 1 : quantity,
+      'quote_id': '$token',
+      "product_option": {
+        "extension_attributes": {
+          "configurable_item_options":
+          json.encode(simpleProductOptions),
+        },
+      },
+    },
+  };
 
+  print("JSON Response : ${requestData}");
 
   http.Response response = await http.post(
     url,
@@ -114,36 +173,7 @@ Future<void> sfAPIAddItemToCart(String token, int qouteId, String sku,
             'Accept': 'application/json',
             'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
           },
-    body: json.encode(
-      type == 0
-          ? userType == 'Guest'
-              ? {
-                  'cartItem': {
-                    'sku': '$sku',
-                    'qty': quantity == 0 ? 1 : quantity
-                  },
-                }
-              : {
-                  'cartItem': {
-                    'sku': '$sku',
-                    'qty': quantity == 0 ? 1 : quantity,
-                    'quote_id': '$token',
-                  },
-                }
-          : {
-              'cartItem': {
-                'sku': '$sku',
-                'qty': quantity == 0 ? 1 : quantity,
-                'quote_id': '$token',
-                "product_option": {
-                  "extension_attributes": {
-                    "configurable_item_options}":
-                        json.encode(simpleProductOptions),
-                  },
-                },
-              },
-            },
-    ),
+    body: json.encode(requestData),
   );
   print(response.body);
   if (response.statusCode != 200) {

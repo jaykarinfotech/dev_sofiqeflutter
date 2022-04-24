@@ -35,7 +35,7 @@ Future<void> sfAPISendQuestionnaireResponse(
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer ${APITokens.customerSavedToken}',
+      'Authorization': 'Bearer ${await APITokens.customerSavedToken}',
     },
     body: json.encode(body),
   );
@@ -57,7 +57,10 @@ sfAPIgetIngredients() async {
   try {
     http.Response? response = await NetworkHandler.getMethodCall(
         url: 'https://dev.sofiqe.com/rest/V1/ingredients',
-        headers: APIEndPoints.headers('Bearer n0y2a0zdfd2xwk24d4c2ucslncm9qovv'));
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${APITokens.bearerToken}',
+      },);
     print("after api  ${response!.statusCode}");
 
     if (response.statusCode == 200) {

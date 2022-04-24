@@ -7,6 +7,8 @@ import 'package:sofiqe/controller/orderDetailController.dart';
 import 'package:sofiqe/utils/constants/api_end_points.dart';
 import 'package:sofiqe/utils/states/function.dart';
 
+import '../../controller/shoppinglistHistory.dart';
+
 class ProductDetail extends StatefulWidget {
   Map<String, dynamic> data;
   String orderId;
@@ -20,6 +22,7 @@ class ProductDetail extends StatefulWidget {
 class _ProductDetailState extends State<ProductDetail> {
 //   @override
   OrderDetailController shoppingHistory = Get.put(OrderDetailController());
+  ShoppingHistory sHistory = Get.put(ShoppingHistory());
 
   @override
   void initState() {
@@ -58,16 +61,22 @@ class _ProductDetailState extends State<ProductDetail> {
             width: Get.width,
             child: Column(
               children: [
-                Container( width: Get.width, color: Colors.black,child:  Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                      'ORDER DETAILS',
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 15, letterSpacing: 1),
+                Container(
+                  width: Get.width,
+                  color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        'ORDER DETAILS',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            letterSpacing: 1),
+                      ),
                     ),
                   ),
-                ),),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -97,30 +106,33 @@ class _ProductDetailState extends State<ProductDetail> {
                                     ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
-                                        itemCount:
-                                            contrl.orderModel!.data!.items!.length,
+                                        itemCount: contrl
+                                            .orderModel!.data!.items!.length,
                                         itemBuilder: (context, i) {
                                           return InkWell(
                                             child: Container(
-                                              padding:
-                                                  EdgeInsets.symmetric(vertical: 10),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 10),
                                               child: Row(
                                                 children: [
                                                   Container(
                                                     width: Get.width * 0.25,
                                                     child: Padding(
                                                       padding:
-                                                          const EdgeInsets.all(10.0),
+                                                          const EdgeInsets.all(
+                                                              10.0),
                                                       child: Image.network(
-                                                        APIEndPoints.mediaBaseUrl +
+                                                        APIEndPoints
+                                                                .mediaBaseUrl +
                                                             "${contrl.orderModel!.data!.items![i].image}",
                                                       ),
                                                     ),
                                                   ),
                                                   Expanded(
                                                     child: Container(
-                                                      padding: EdgeInsets.symmetric(
-                                                          horizontal: 10),
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10),
                                                       child: Container(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -137,8 +149,9 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
-                                                              overflow: TextOverflow
-                                                                  .ellipsis,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                             SizedBox(
                                                               height: 5,
@@ -157,7 +170,8 @@ class _ProductDetailState extends State<ProductDetail> {
                                                             Text(
                                                                 "SIZE: ${contrl.orderModel!.data!.items![i].customAttributes!.volume}",
                                                                 style: TextStyle(
-                                                                    fontSize: 12,
+                                                                    fontSize:
+                                                                        12,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .normal)),
@@ -170,17 +184,18 @@ class _ProductDetailState extends State<ProductDetail> {
                                                                 Text(
                                                                     "COLOUR: ${widget.data["colour"]}",
                                                                     style: TextStyle(
-                                                                        fontSize: 12,
+                                                                        fontSize:
+                                                                            12,
                                                                         fontWeight:
-                                                                            FontWeight
-                                                                                .normal)),
+                                                                            FontWeight.normal)),
                                                                 SizedBox(
                                                                   width: 100,
                                                                 ),
                                                                 Text(
                                                                   '€${(double.parse(contrl.orderModel!.data!.items![i].price!)).toStringAsFixed(2)}',
                                                                   style: TextStyle(
-                                                                      fontSize: 10,
+                                                                      fontSize:
+                                                                          10,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .normal),
@@ -280,23 +295,31 @@ class _ProductDetailState extends State<ProductDetail> {
                                         Row(
                                           children: [
                                             Text(
-                                                contrl.orderModel!.data!
-                                                            .paymentMethod!.ccType ==
+                                                contrl
+                                                            .orderModel!
+                                                            .data!
+                                                            .paymentMethod!
+                                                            .ccType ==
                                                         null
                                                     ? ''
                                                     : "${contrl.orderModel!.data!.paymentMethod!.ccType} ",
                                                 style: TextStyle(
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.normal)),
+                                                    fontWeight:
+                                                        FontWeight.normal)),
                                             Text(
-                                                contrl.orderModel!.data!
-                                                            .paymentMethod!.ccLast4 ==
+                                                contrl
+                                                            .orderModel!
+                                                            .data!
+                                                            .paymentMethod!
+                                                            .ccLast4 ==
                                                         null
                                                     ? ''
                                                     : "${contrl.orderModel!.data!.paymentMethod!.ccLast4}",
                                                 style: TextStyle(
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.normal)),
+                                                    fontWeight:
+                                                        FontWeight.normal)),
                                           ],
                                         ),
                                       ],
@@ -331,18 +354,25 @@ class _ProductDetailState extends State<ProductDetail> {
                                     SizedBox(
                                       height: 25,
                                     ),
-                                    Center(
-                                      child: Container(
-                                        height: 50,
-                                        alignment: Alignment.center,
-                                        width: Get.width * 0.6,
-                                        decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            borderRadius: BorderRadius.circular(30)),
-                                        child: Text(
-                                          'BUY AGAIN',
-                                          style: TextStyle(
-                                              color: Colors.white, fontSize: 14),
+                                    GestureDetector(
+                                      onTap: () async{
+                                         await sHistory.orderAgain(contrl.orderModel!.data!.orderId!);
+                                      },
+                                      child: Center(
+                                        child: Container(
+                                          height: 50,
+                                          alignment: Alignment.center,
+                                          width: Get.width * 0.6,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                                  BorderRadius.circular(30)),
+                                          child: Text(
+                                            'BUY AGAIN',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14),
+                                          ),
                                         ),
                                       ),
                                     ),

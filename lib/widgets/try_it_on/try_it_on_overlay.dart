@@ -16,6 +16,7 @@ import 'package:sofiqe/widgets/round_button.dart';
 import 'package:sofiqe/widgets/try_on_product.dart';
 
 import '../../provider/cart_provider.dart';
+import '../../provider/page_provider.dart';
 import '../../screens/shopping_bag_screen.dart';
 
 class TryItOnOverlay extends StatefulWidget {
@@ -111,9 +112,14 @@ class _TryItOnOverlayState extends State<TryItOnOverlay>
                     child: IconButton(
                       icon: const Icon(Icons.close, color: Colors.white),
                       onPressed: () {
-                        if(tiop.page.value == 2){
-                          tiop.page.value = 0;
-                        }
+                        print('Back pressed');
+                        Navigator.pop(context);
+                        final PageProvider pp = Get.find();
+                        pp.goToPage(Pages.MAKEOVER);
+                        //Navigator.pop(context);
+                        // if(tiop.page.value == 2){
+                        //   tiop.page.value = 0;
+                        // }
                       },
                     ),
                   ),

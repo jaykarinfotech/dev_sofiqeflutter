@@ -73,7 +73,7 @@ class Item {
   String? avgrating;
   String? productUrl;
   String? imageUrl;
-  String? rewardPoints;
+  int? rewardPoints;
   int? oldPrice;
   int? price;
 

@@ -211,7 +211,7 @@ class _ProductColorScanAssistState extends State<ProductColorScanAssist> {
     if(Provider.of<AccountProvider>(context, listen: false).isLoggedIn){
       tiop.page.value = 2;
       tiop.directProduct.value = false;
-      pp.goToPage(Pages.TRYITON);
+      pp.goToPage(Pages.MAKEOVER);
       await tiop.getScanResults();
     }else{
       showLogin.value = true;
@@ -290,7 +290,7 @@ class _ProductColorScanAssistState extends State<ProductColorScanAssist> {
         onSuccess: () async {
           tiop.page.value = 2;
           tiop.directProduct.value = false;
-          pp.goToPage(Pages.TRYITON);
+          pp.goToPage(Pages.MAKEOVER);
           await tiop.getScanResults();
         },
       ) : Stack(

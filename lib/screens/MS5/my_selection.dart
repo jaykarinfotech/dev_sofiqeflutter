@@ -315,7 +315,7 @@ class _TopBanner extends StatelessWidget {
               ),
               SizedBox(height: size.height * 0.01),
               Text(
-                '9 Products',
+                '0 Products',
                 style: Theme.of(context).textTheme.headline2!.copyWith(
                       color: Colors.white,
                       fontSize: size.height * 0.015,
@@ -474,7 +474,7 @@ class _MainFilter extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              // catp.setFaceArea(FaceArea.ALL);
+              catp.setFaceArea(FaceArea.ALL);
             },
             child: Text(
               'ALL',
@@ -488,7 +488,7 @@ class _MainFilter extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              // catp.setFaceArea(FaceArea.EYES);
+              catp.setFaceArea(FaceArea.EYES);
             },
             child: Text(
               'EYES',
@@ -502,7 +502,7 @@ class _MainFilter extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              // catp.setFaceArea(FaceArea.LIPS);
+              catp.setFaceArea(FaceArea.LIPS);
             },
             child: Text(
               'LIPS',
@@ -516,7 +516,7 @@ class _MainFilter extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              // catp.setFaceArea(FaceArea.CHEEKS);
+              catp.setFaceArea(FaceArea.CHEEKS);
             },
             child: Text(
               'CHEEKS',

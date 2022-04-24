@@ -1,6 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -10,22 +9,29 @@ import 'package:sofiqe/model/product_model.dart';
 import 'package:sofiqe/model/product_model_best_seller.dart';
 import 'package:sofiqe/utils/api/shopping_cart_api.dart';
 import 'package:sofiqe/utils/states/local_storage.dart';
-
-import '../model/lookms3model.dart';
 import 'account_provider.dart';
 
 class CartProvider extends ChangeNotifier {
+  late AccountProvider userProvider;
   late List<Map<String, dynamic>> chargesList;
-  late String cartToken;
+  String cartToken = '';
   List<dynamic>? cart;
   Map<String, dynamic>? cartDetails;
   var itemCount = 0;
 
-  CartProvider() {
-  _initData();
+  bool _isLoggedIn = false;
+
+  void update(login) async{
+    _isLoggedIn = login;
+    await fetchCartDetails();
+    notifyListeners();
   }
 
-  _initData() async{
+  CartProvider() {
+    _initData();
+  }
+
+  _initData() async {
     chargesList = [
       {
         'name': 'Subtotal',
@@ -48,6 +54,7 @@ class CartProvider extends ChangeNotifier {
         'display': '0',
       },
     ];
+
     await initializeCart();
   }
 
@@ -56,20 +63,28 @@ class CartProvider extends ChangeNotifier {
     cartToken = token;
     print("CartToken  -->> succ ${cartToken}");
 
-    await sfStoreInSharedPrefData(fieldName: 'cart-token', value: '$cartToken', type: PreferencesDataType.STRING);
+    await sfStoreInSharedPrefData(
+        fieldName: 'cart-token',
+        value: '$cartToken',
+        type: PreferencesDataType.STRING);
     await fetchCartDetails();
   }
 
   Future<bool> fetchCartDetails() async {
     try {
-
       itemCount = 0;
-      cart= await sfAPIGetGuestCartList(cartToken);
-      cartDetails= await sfAPIGetGuestCartDetails(cartToken);
+      if (!_isLoggedIn) {
+        cart = await sfAPIGetGuestCartList(cartToken);
+        cartDetails = await sfAPIGetGuestCartDetails(cartToken);
+      } else {
+        cart = await sfAPIGetUserCartList();
+        cartDetails = await sfAPIGetUserCartDetails();
+      }
 
       // print(cart);
       _setItemCount();
       calculateCartPrice();
+      notifyListeners();
       return true;
     } catch (err) {
       print('Error fetchCartDetails: $err');
@@ -83,20 +98,29 @@ class CartProvider extends ChangeNotifier {
     await sfRemoveFromSharedPrefData(fieldName: 'cart-token');
   }
 
-  Future<void> addToCart(BuildContext context, String sku, List simpleProductOptions, int type,
+  Future<void> addToCart(
+      BuildContext context, String sku, List simpleProductOptions, int type,
       {bool refresh = true, int quantity = 0}) async {
     try {
-      !Provider.of<AccountProvider>(context, listen: false).isLoggedIn ?
-      await sfAPIAddItemToCart(cartToken, cartDetails!['id'], sku, simpleProductOptions, type, 'Guest',  quantity: quantity)
-      : await sfAPIAddItemToCart(cartToken, cartDetails!['id'], sku, simpleProductOptions, type, 'LoggedIn', quantity: quantity);
+      !Provider.of<AccountProvider>(context, listen: false).isLoggedIn
+          ? await sfAPIAddItemToCart(cartToken, cartDetails!['id'], sku,
+              simpleProductOptions, type, 'Guest', quantity: quantity)
+          : await sfAPIAddItemToCart(cartToken, cartDetails!['id'], sku,
+              simpleProductOptions, type, 'LoggedIn',
+              quantity: quantity);
       if (refresh) {
         await fetchCartDetails();
       }
       notifyListeners();
     } catch (e) {
+      if (refresh) {
+        await fetchCartDetails();
+      }
+      notifyListeners();
       print('Error adding product to cart: $e');
       Map message = e as Map;
-      if (message['message'].compareTo('The requested qty is not available') == 0) {
+      if (message['message'].compareTo('The requested qty is not available') ==
+          0) {
         Get.showSnackbar(
           GetBar(
             message: 'The product is out of stock',
@@ -115,11 +139,13 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addHomeProductsToCart(BuildContext context, Product product) async {
+  Future<void> addHomeProductsToCart(
+      BuildContext context, Product product) async {
     addToCart(context, product.sku!, [], product.hasOption ? 1 : 0);
   }
 
-  Future<void> addHomeProductsToCartt(BuildContext context, Product1 product) async {
+  Future<void> addHomeProductsToCartt(
+      BuildContext context, Product1 product) async {
     addToCart(context, product.sku!, [], 1);
   }
 

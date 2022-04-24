@@ -15,10 +15,10 @@ import '../utils/api/free_shipping_amount_api.dart';
 class AccountProvider extends ChangeNotifier {
   late String userToken;
   late int customerId;
-  late bool isLoggedIn;
+  bool isLoggedIn = false;
   late bool goldPremium;
   late User? user;
-  late String freeShippingAmount;
+  String freeShippingAmount = '';
 
   AccountProvider() {
     _initData();
@@ -117,6 +117,7 @@ class AccountProvider extends ChangeNotifier {
       /// Fetch wishlist
       WishListProvider wp = Get.find();
       wp.login();
+
 
       ///
 
